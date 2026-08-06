@@ -1,0 +1,8 @@
+node_modules
+dist
+.vercel
+*.exe
+*.o
+.DS_Store
+automobile-etl
+DataEngineering

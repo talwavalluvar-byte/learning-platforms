@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_fact_delivery
+    description: "Staging view over fact_delivery table in automobile_dw Data Warehouse."
+    columns:
+      - name: lead_id
+        description: "Primary Lead Surrogate Identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: date_of_actual_delivery
+        description: "Actual Vehicle Delivery Date"
+        tests:
+          - not_null
+
+      - name: make
+        description: "Vehicle Manufacturer / Make Name"
+        tests:
+          - not_null
+
+      - name: model
+        description: "Vehicle Model Name"
+        tests:
+          - not_null

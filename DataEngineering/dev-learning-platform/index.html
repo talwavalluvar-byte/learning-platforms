@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log2Code - Computer Science Visualizer</title>
+  <meta name="description" content="Interactive visual learning platform for computer science, C/C++ pointers, memory allocation, and algorithms.">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="./src/styles/main.css">
+</head>
+<body class="dark-theme" data-syntax-theme="theme-antigravity">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo" id="nav-logo">
+        <div class="logo-icon">
+          <i data-lucide="cpu"></i>
+          <span class="logo-pulse"></span>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Log2<span class="highlight">Code</span></span>
+          <span class="logo-subtitle">CS VISUALIZER</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-link active" data-view="catalog">
+          <i data-lucide="book-open"></i> Courses
+        </button>
+        <button class="nav-link" data-view="player">
+          <i data-lucide="play-circle"></i> Lesson Visualizer
+        </button>
+        <button class="nav-link" data-view="sandbox">
+          <i data-lucide="code-2"></i> Code Sandbox
+        </button>
+        <button class="nav-link" data-view="dashboard">
+          <i data-lucide="layout-dashboard"></i> My Dashboard
+        </button>
+        <button class="nav-link" data-view="admin" style="color:var(--accent-purple);">
+          <i data-lucide="shield-check"></i> Admin Control
+        </button>
+      </nav>
+    </div>
+
+    <div class="nav-right">
+      <select id="sandbox-lang-select" class="form-select" style="padding:2px 8px; font-size:0.75rem; height:26px; border-radius:6px; background:#1e293b; color:#e2e8f0; border:1px solid rgba(255,255,255,0.12);">
+        <option value="c">C (GCC Compiler)</option>
+        <option value="cpp">C++ (G++ Compiler)</option>
+        <option value="java">☕ Java (JDK 21 Compiler)</option>
+        <option value="python">🐍 Python (Python 3.12 Interpreter)</option>
+      </select>
+
+      <select id="sandbox-template-select" class="form-select" style="padding:2px 8px; font-size:0.75rem; height:26px; border-radius:6px; background:#1e293b; color:#e2e8f0; border:1px solid rgba(255,255,255,0.12);">
+        <option value="c-hello">⚡ C Hello World & Main</option>
+        <option value="c-bubble-sort">1. 🫧 Bubble Sort</option>
+        <option value="c-selection-sort">2. 🎯 Selection Sort</option>
+        <option value="c-insertion-sort">3. 🃏 Insertion Sort</option>
+        <option value="c-merge-sort">4. 🌲 Merge Sort</option>
+        <option value="c-quick-sort">5. ⚡ Quick Sort</option>
+        <option value="c-linear-search">6. 🔍 Linear Search</option>
+        <option value="c-binary-search">7. 🔵 Binary Search</option>
+        <option value="c-stack">8. 📦 Stack (LIFO)</option>
+        <option value="c-queue">9. 🚶 Queue (FIFO)</option>
+        <option value="c-linked-list">10. 🔗 Singly Linked List</option>
+        <option value="c-doubly-linked-list">11. 🔗 Doubly Linked List</option>
+        <option value="c-bst">12. 🌲 Binary Search Tree</option>
+        <option value="c-avl-tree">13. 🌲 AVL Tree</option>
+        <option value="c-graph">14. ❄️ Graph (BFS/DFS)</option>
+        <option value="c-hash-map">15. 🗺️ Hash Map</option>
+        <option value="c-pointer">16. 📌 Pointer Visualization</option>
+        <option value="c-recursion">17. 📞 Recursion Call Stack</option>
+        <option value="c-dma">18. 💾 Stack vs Heap Memory</option>
+        <option value="cpp-class">C++ Classes & Objects</option>
+        <option value="cpp-vector">C++ Vector STL</option>
+        <option value="java-hello">☕ Java Class & Main Method</option>
+        <option value="java-array">☕ Java ArrayList & Memory</option>
+        <option value="python-basics">🐍 Python Basics & Functions</option>
+        <option value="python-list">🐍 Python Lists & Memory</option>
+      </select>
+
+      <div class="syntax-theme-selector" title="Select Code Syntax Highlighting Theme">
+        <i data-lucide="palette" class="theme-selector-icon"></i>
+        <select class="syntax-theme-dropdown" id="select-syntax-theme">
+          <option value="theme-antigravity">✨ Antigravity / VS Code</option>
+          <option value="theme-onedark">🟣 One Dark Pro</option>
+          <option value="theme-dracula">🧛 Dracula</option>
+          <option value="theme-monokai">💛 Monokai Pro</option>
+          <option value="theme-nord">❄️ Nord</option>
+          <option value="theme-tokyonight">🌃 Tokyo Night</option>
+          <option value="theme-github">🐙 GitHub Color</option>
+        </select>
+      </div>
+
+      <!-- User Auth Profile / Login Button -->
+      <div id="user-auth-box">
+        <button class="btn btn-sm btn-outline" id="btn-open-login" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; border:1px solid #38bdf8; color:#38bdf8; background:rgba(56,189,248,0.1); display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
+          <i data-lucide="log-in"></i> Login
+        </button>
+      </div>
+
+      <button class="btn-icon" id="btn-toggle-theme" title="Toggle Light / Dark Mode">
+        <i data-lucide="moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main App Viewports Container -->
+  <main id="app-container">
+    
+    <!-- 1. CATALOG VIEW -->
+    <section id="view-catalog" class="view-section active">
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-tag"><i data-lucide="sparkles"></i> Log2Base2-Style Visualizations</span>
+          <h1>Master Coding Visually with <span class="text-gradient">Memory Diagrams & Interactive Animations</span></h1>
+          <p>Understand complex computer science concepts, C pointers, memory allocation, and data structure algorithms step-by-step with interactive memory visual animations.</p>
+          
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="btn-hero-start">
+              <i data-lucide="play"></i> Resume C Pointers Course
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-visual-card" id="hero-animated-debugger" style="min-height:360px; display:flex; flex-direction:column; justify-content:space-between; border:1px solid rgba(56,189,248,0.35); box-shadow:0 12px 40px rgba(0,0,0,0.6);">
+          <div class="visual-card-header" style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:rgba(2,6,23,0.85);">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span class="card-title" style="font-weight:700; color:#cbd5e1; font-size:0.85rem;">Stack Frame & Heap Memory Debugger</span>
+            </div>
+            <span class="step-badge" id="hero-anim-step-label" style="font-size:0.75rem; color:#38bdf8; background:rgba(56,189,248,0.15); padding:4px 12px; border-radius:12px; font-weight:700; border:1px solid rgba(56,189,248,0.3);">Step 1: int a = 10;</span>
+          </div>
+
+          <div class="visual-card-body" style="padding:16px 18px; flex:1; display:flex; flex-direction:column; justify-content:space-between; background:rgba(15,23,42,0.7);">
+            <!-- 5-Line Animated Code Box -->
+            <div style="font-family:var(--font-code); font-size:0.82rem; background:rgba(0,0,0,0.7); padding:10px 14px; border-radius:8px; margin-bottom:14px; border-left:4px solid #38bdf8; box-shadow:inset 0 2px 6px rgba(0,0,0,0.5);" id="hero-anim-code-box">
+              <div id="anim-line-1" class="anim-code-line active" style="padding:3px 6px; border-radius:4px; transition:all 0.3s ease; background:rgba(56,189,248,0.2); color:#fff; font-weight:600;"><span style="color:#64748b; margin-right:10px;">1</span><span style="color:#3b82f6;">int</span> a = <span style="color:#00f5d4; font-weight:700;">10</span>; <span style="color:#6a9955; font-style:italic;">// Local variable on Stack</span></div>
+              <div id="anim-line-2" class="anim-code-line" style="padding:3px 6px; border-radius:4px; transition:all 0.3s ease; color:#94a3b8;"><span style="color:#64748b; margin-right:10px;">2</span><span style="color:#3b82f6;">int</span> *ptr = (<span style="color:#3b82f6;">int</span>*)<span style="color:#c084fc; font-weight:700;">malloc</span>(<span style="color:#3b82f6;">sizeof</span>(<span style="color:#3b82f6;">int</span>));</div>
+              <div id="anim-line-3" class="anim-code-line" style="padding:3px 6px; border-radius:4px; transition:all 0.3s ease; color:#94a3b8;"><span style="color:#64748b; margin-right:10px;">3</span>*ptr = a + <span style="color:#00f5d4; font-weight:700;">15</span>; <span style="color:#6a9955; font-style:italic;">// Write 25 into Heap</span></div>
+              <div id="anim-line-4" class="anim-code-line" style="padding:3px 6px; border-radius:4px; transition:all 0.3s ease; color:#94a3b8;"><span style="color:#64748b; margin-right:10px;">4</span><span style="color:#ef4444; font-weight:700;">free</span>(ptr); <span style="color:#6a9955; font-style:italic;">// Deallocate dynamic Heap block</span></div>
+              <div id="anim-line-5" class="anim-code-line" style="padding:3px 6px; border-radius:4px; transition:all 0.3s ease; color:#94a3b8;"><span style="color:#64748b; margin-right:10px;">5</span>ptr = <span style="color:#eab308; font-weight:700;">NULL</span>; <span style="color:#6a9955; font-style:italic;">// Reset dangling pointer</span></div>
+            </div>
+
+            <!-- Stack & Heap Dual Region Dynamic Visual Memory Grid -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; align-items:stretch;">
+              
+              <!-- Left: Animated Stack Frame -->
+              <div style="background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.4); border-radius:10px; padding:12px; text-align:left; transition:all 0.4s ease;" id="anim-card-stack">
+                <div style="font-size:0.7rem; font-weight:800; color:#38bdf8; margin-bottom:8px; letter-spacing:0.5px; border-bottom:1px solid rgba(56,189,248,0.2); padding-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+                  <span>STACK FRAME (main)</span>
+                  <span style="font-size:0.6rem; color:#94a3b8;">0x7ffe00</span>
+                </div>
+                
+                <!-- Stack Variables List -->
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; transition:all 0.3s ease;" id="stack-var-a-box">
+                    <span style="font-size:0.75rem; font-weight:700; color:#fff; font-family:var(--font-code);">int a</span>
+                    <span style="font-size:0.85rem; font-weight:800; color:#00f5d4; font-family:var(--font-code);" id="stack-var-a-val">10</span>
+                  </div>
+                  
+                  <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; opacity:0.3; transition:all 0.3s ease;" id="stack-var-ptr-box">
+                    <span style="font-size:0.75rem; font-weight:700; color:#fff; font-family:var(--font-code);">int *ptr</span>
+                    <span style="font-size:0.78rem; font-weight:700; color:#f97316; font-family:var(--font-code);" id="stack-var-ptr-val">0x902040</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Animated Dynamic Heap Segment Card -->
+              <div style="background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.35); border-radius:10px; padding:12px; text-align:center; opacity:0.3; transition:all 0.4s ease;" id="anim-card-heap">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; border-bottom:1px solid rgba(168,85,247,0.2); padding-bottom:4px;">
+                  <span style="font-size:0.7rem; font-weight:800; color:#c084fc; letter-spacing:0.5px;">HEAP (Dynamic)</span>
+                  <span style="font-size:0.62rem; padding:2px 6px; border-radius:4px; background:#10b981; color:#000; font-weight:800;" id="anim-heap-badge">MALLOC</span>
+                </div>
+                <div style="font-size:0.68rem; color:#64748b; font-family:var(--font-code);">0x902040</div>
+                <div style="font-size:1.3rem; font-weight:800; color:#00f5d4; margin-top:4px;" id="anim-val-heap">?</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Filtering -->
+      <div class="catalog-controls">
+        <h2 class="section-title">Explore Interactive Courses</h2>
+        <div class="filter-tabs">
+          <button class="filter-btn active" data-filter="all">All Courses</button>
+          <button class="filter-btn" data-filter="c-prog">C & Memory</button>
+          <button class="filter-btn" data-filter="dsa">Data Structures</button>
+          <button class="filter-btn" data-filter="python">Python Model</button>
+          <button class="filter-btn" data-filter="web">System Architecture</button>
+        </div>
+      </div>
+
+      <!-- Course Cards Grid -->
+      <div class="course-grid" id="course-grid-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- 2. LESSON PLAYER & VISUALIZER VIEW (Log2Base2 Dual-Panel Layout) -->
+    <section id="view-player" class="view-section">
+      <!-- Lesson Header Bar -->
+      <div class="lesson-header-bar">
+        <div class="lesson-info">
+          <button class="btn-back" id="btn-back-to-catalog">
+            <i data-lucide="arrow-left"></i>
+          </button>
+          <div>
+            <span class="course-badge" id="player-course-title">C Programming & Pointers</span>
+            <h2 id="player-lesson-title">Lesson 1: Introduction to Memory Addresses & Variables</h2>
+          </div>
+        </div>
+
+        <div class="lesson-controls">
+          <button class="btn btn-sm btn-success" id="btn-toggle-complete">
+            <i data-lucide="check-circle"></i> <span id="complete-btn-text">Mark as Complete</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dual Panel Main Grid -->
+      <div class="dual-panel-container">
+        
+        <!-- LEFT PANEL: Video Player + Interactive Memory Visualizer -->
+        <div class="panel-left">
+          
+          <!-- Video Container -->
+          <div class="video-wrapper">
+            <div class="video-container" id="video-container">
+              <!-- HTML5 Video Player -->
+              <video id="main-video-player" playsinline>
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+
+              <!-- Google Drive Embed iframe -->
+              <iframe id="gdrive-iframe-player" src="" style="display:none; width:100%; height:100%; border:none;" allow="autoplay" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+
+              <!-- Video Upload Overlay when no video is loaded or on drop -->
+              <div class="video-dropzone" id="video-dropzone">
+                <i data-lucide="cloud-upload" class="drop-icon"></i>
+                <h3>Drop Offline Video Here or Connect Google Drive</h3>
+                <p>Attach your Google Drive file link or local .mp4/.webm video for this lesson</p>
+                <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/mkv" style="display:none;">
+                <div class="dropzone-buttons">
+                  <button class="btn btn-primary btn-sm" id="btn-select-video-file">
+                    <i data-lucide="folder"></i> Browse Local File
+                  </button>
+                  <button class="btn btn-secondary btn-sm" id="btn-open-gdrive-input">
+                    <i data-lucide="link"></i> Paste GDrive URL
+                  </button>
+                </div>
+              </div>
+
+              <!-- Custom Video Controls Overlay -->
+              <div class="custom-video-controls" id="custom-video-controls">
+                <div class="progress-bar-container" id="video-progress-container">
+                  <div class="progress-bar-fill" id="video-progress-fill"></div>
+                  <div class="progress-bar-buffer" id="video-progress-buffer"></div>
+                  <div class="marker-container" id="video-step-markers"></div>
+                </div>
+
+                <div class="controls-row">
+                  <div class="controls-left">
+                    <button class="ctrl-btn" id="ctrl-play"><i data-lucide="play"></i></button>
+                    <button class="ctrl-btn" id="ctrl-rewind" title="-10 seconds"><i data-lucide="rotate-ccw"></i></button>
+                    <button class="ctrl-btn" id="ctrl-forward" title="+10 seconds"><i data-lucide="rotate-cw"></i></button>
+                    
+                    <div class="time-display">
+                      <span id="time-current">00:00</span> / <span id="time-duration">00:00</span>
+                    </div>
+                  </div>
+
+                  <div class="controls-right">
+                    <div class="speed-selector">
+                      <button class="ctrl-btn" id="ctrl-speed-btn">1.0x</button>
+                      <div class="speed-menu" id="speed-menu">
+                        <span data-speed="0.5">0.5x</span>
+                        <span data-speed="0.75">0.75x</span>
+                        <span data-speed="1.0" class="active">1.0x</span>
+                        <span data-speed="1.25">1.25x</span>
+                        <span data-speed="1.5">1.5x</span>
+                        <span data-speed="2.0">2.0x</span>
+                      </div>
+                    </div>
+                    <button class="ctrl-btn" id="ctrl-pip" title="Picture-in-Picture"><i data-lucide="airplay"></i></button>
+                    <button class="ctrl-btn" id="ctrl-fullscreen" title="Fullscreen"><i data-lucide="maximize"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Player Mode Switcher Bar -->
+            <div class="video-mode-bar" style="display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding:6px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:var(--radius-sm);">
+              <span style="font-size:0.75rem; color:var(--text-subtle);"><i data-lucide="video"></i> Video Stream Player</span>
+              <button class="btn-xs btn-outline" id="btn-switch-player-mode" title="Switch between Google Drive Iframe and Direct HTML5 Stream"><i data-lucide="refresh-cw"></i> Switch Player Mode (Direct Stream / Iframe)</button>
+            </div>
+          </div>
+
+          <!-- LOG2BASE2 INTERACTIVE MEMORY & DSA ANIMATION CANVAS -->
+          <div class="visualizer-wrapper">
+            <div class="visualizer-header">
+              <div class="visualizer-title">
+                <i data-lucide="layers"></i>
+                <span id="visualizer-mode-label">Memory Allocation & Pointer Graph</span>
+              </div>
+
+              <!-- Animation Step Controls -->
+              <div class="step-controls">
+                <button class="btn-step" id="btn-step-prev" title="Previous Step">
+                  <i data-lucide="skip-back"></i> Step Back
+                </button>
+                <div class="step-indicator">
+                  <span id="current-step-num">1</span> / <span id="total-steps-num">4</span>
+                </div>
+                <button class="btn-step" id="btn-step-next" title="Next Step">
+                  Step Next <i data-lucide="skip-forward"></i>
+                </button>
+                <button class="btn-step btn-accent" id="btn-step-auto" title="Auto Play Simulation">
+                  <i data-lucide="play"></i> Auto Simulate
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Interactive Animation Box -->
+            <div class="visualizer-body" id="visualizer-canvas-container">
+              <!-- Memory Diagram / DSA Bars rendered via JavaScript -->
+            </div>
+
+            <div class="visualizer-footer" id="visualizer-explanation-bar">
+              <i data-lucide="info" class="info-icon"></i>
+              <span id="step-explanation-text">Click "Step Next" or play the video to see memory changes.</span>
+            </div>
+          </div>
+
+          <!-- LOG2BASE2 BOTTOM NAVIGATION BAR -->
+          <div class="log2base2-bottom-bar">
+            <button class="btn-nav-arrow" id="btn-prev-lesson" title="Previous Lesson">
+              <i data-lucide="arrow-left"></i>
+            </button>
+            <div class="bottom-bar-tabs">
+              <button class="b-tab active" data-bpanel="video"><i data-lucide="play-circle"></i> Video</button>
+              <button class="b-tab" data-bpanel="puzzles"><i data-lucide="puzzle"></i> Puzzles / Quiz</button>
+              <button class="b-tab" data-bpanel="visualizer"><i data-lucide="layers"></i> Memory Visualizer</button>
+            </div>
+            <button class="btn-nav-arrow" id="btn-next-lesson" title="Next Lesson">
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- RIGHT PANEL: Code Viewer, Notes, Quiz Drawer, Curriculum Sidebar -->
+        <div class="panel-right">
+          
+          <!-- Panel Tab Bar -->
+          <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="curriculum"><i data-lucide="list"></i> Playlist</button>
+            <button class="tab-btn" data-tab="code"><i data-lucide="code"></i> Code</button>
+            <button class="tab-btn" data-tab="notes"><i data-lucide="file-text"></i> Notes</button>
+            <button class="tab-btn" data-tab="quiz"><i data-lucide="help-circle"></i> Quiz</button>
+          </div>
+
+          <div class="panel-tab-content">
+            
+            <!-- CURRICULUM PLAYLIST TAB (DEFAULT) -->
+            <div class="tab-pane active" id="tab-curriculum">
+              <div class="curriculum-sidebar" id="curriculum-list-container">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- CODE TAB -->
+            <div class="tab-pane" id="tab-code">
+              <div class="code-header">
+                <span class="code-lang-badge" id="code-lang-tag">C Code</span>
+                <div class="code-actions">
+                  <button class="btn-xs btn-outline" id="btn-sync-video-code" title="Extract & Sync Code from Currently Playing Video"><i data-lucide="scan"></i> Sync Video Code</button>
+                  <button class="btn-xs btn-outline" id="btn-copy-code"><i data-lucide="copy"></i> Copy</button>
+                  <button class="btn-xs btn-primary" id="btn-run-code-sandbox"><i data-lucide="play"></i> Try in Sandbox</button>
+                </div>
+              </div>
+
+              <div class="code-editor-container">
+                <pre class="code-display"><code id="code-snippet-block">
+/* Select a lesson to view interactive code */
+                </code></pre>
+              </div>
+
+              <!-- Output Simulation Box -->
+              <div class="code-output-box">
+                <div class="output-header"><i data-lucide="terminal"></i> Output / Variable Inspection</div>
+                <div class="output-content" id="code-output-display">
+                  Program output will appear here during execution.
+                </div>
+              </div>
+            </div>
+
+            <!-- NOTES TAB -->
+            <div class="tab-pane" id="tab-notes">
+              <div class="notes-container">
+                <div class="notes-toolbar">
+                  <span>Timestamped Study Notes</span>
+                  <button class="btn-xs btn-primary" id="btn-add-timestamp-note">
+                    <i data-lucide="plus"></i> Add Note at <span id="note-current-time">00:00</span>
+                  </button>
+                </div>
+                <textarea id="lesson-notes-textarea" placeholder="Type your personal observations, memory rules, or questions here... (Saved automatically)"></textarea>
+                <div class="saved-notes-list" id="saved-notes-list">
+                  <!-- User saved timestamp notes -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. C & C++ CODE SANDBOX VIEW (VS Code & Xcode IDE with Intellisense & Live Memory Graph) -->
+    <section id="view-sandbox" class="view-section">
+      <div class="sandbox-container">
+        <div class="sandbox-split">
+          
+          <!-- LEFT COLUMN: Engine (Top) + Terminal (Bottom) -->
+          <div class="sandbox-left-panel">
+            
+            <!-- IDE Code Editor with Intellisense & Line Numbers ("engion") -->
+            <div class="sandbox-editor-wrapper">
+              <div class="ide-status-bar-top" style="display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:wrap; gap:8px;">
+                
+                <!-- LEFT SIDE: File Name -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:0.75rem; font-weight:700; color:#38bdf8; display:flex; align-items:center; gap:6px;">
+                    <i data-lucide="file-code" style="width:14px; height:14px; color:#38bdf8;"></i> main.c / main.cpp
+                  </span>
+                </div>
+
+                <!-- RIGHT SIDE: Full CLion / GDB Debugger Toolbar Suite -->
+                <div style="display:flex; align-items:center; gap:6px;">
+                  
+                  <button class="btn btn-secondary btn-sm" id="btn-start-debug" title="Start Debugging (F5)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35);">
+                    <i data-lucide="bug" style="width:12px; height:12px; color:#38bdf8;"></i> Start Debugger
+                  </button>
+
+                  <button class="btn btn-outline btn-sm" id="btn-toggle-breakpoint" title="Toggle Breakpoint on Active Line (F9)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px;">
+                    <i data-lucide="circle-dot" style="width:12px; height:12px; color:#ef4444;"></i> Breakpoint (F9)
+                  </button>
+
+                  <div class="debugger-btn-group" style="display:flex; align-items:center; gap:3px; background:rgba(15,23,42,0.8); padding:2px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
+                    <button class="dbg-icon-btn" id="btn-reset-debug" title="Restart Debugger (Ctrl+F5)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="rotate-ccw" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-stop-debug" title="Stop Debugger (Shift+F5)" style="width:24px; height:24px; border-radius:4px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="square" style="width:11px; height:11px; fill:#ef4444;"></i></button>
+                    
+                    <span style="width:1px; height:14px; background:rgba(255,255,255,0.15); margin:0 2px;"></span>
+
+                    <button class="dbg-icon-btn" id="btn-continue-debug" title="Resume / Continue Execution (F5)" style="width:24px; height:24px; border-radius:4px; background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="play" style="width:12px; height:12px; fill:#10b981;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-over" title="Step Over (F10)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="corner-down-right" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-into" title="Step Into (F11)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-down" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-out" title="Step Out (Shift+F11)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-up" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-back" title="Step Back" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-left" style="width:12px; height:12px;"></i></button>
+
+                    <span style="width:1px; height:14px; background:rgba(255,255,255,0.15); margin:0 2px;"></span>
+
+                  </div>
+
+                  <button class="btn btn-primary btn-sm" id="btn-execute-sandbox" style="height:26px; padding:0 12px; font-size:0.75rem; font-weight:700; background:linear-gradient(135deg, #2563eb, #3b82f6); border:none; display:inline-flex; align-items:center; gap:4px;">
+                    <i data-lucide="play" style="width:12px; height:12px;"></i> Run Code & Visualize
+                  </button>
+
+                </div>
+              </div>
+
+              <div class="editor-body-relative">
+                <div class="line-numbers-gutter" id="sandbox-line-numbers">
+                  <div>1</div>
+                </div>
+                
+                <!-- Real-time VS Code / Antigravity Syntax Highlight Layer -->
+                <pre class="editor-syntax-highlight" id="sandbox-syntax-overlay"><code id="sandbox-highlight-code"><span class="syn-preproc">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type-kw">int</span> <span class="syn-func">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type-kw">int</span> <span class="syn-var">x</span> <span class="syn-operator">=</span> <span class="syn-num">10</span><span class="syn-operator">;</span>
+    <span class="syn-type-kw">int</span> <span class="syn-var">y</span> <span class="syn-operator">=</span> <span class="syn-num">20</span><span class="syn-operator">;</span>
+    <span class="syn-type-kw">int</span> <span class="syn-var">sum</span> <span class="syn-operator">=</span> <span class="syn-var">x</span> <span class="syn-operator">+</span> <span class="syn-var">y</span><span class="syn-operator">;</span>
+    
+    <span class="syn-func">printf</span><span class="syn-operator">(</span><span class="syn-string">"Sum of %d and %d = %d\n"</span><span class="syn-operator">,</span> <span class="syn-var">x</span><span class="syn-operator">,</span> <span class="syn-var">y</span><span class="syn-operator">,</span> <span class="syn-var">sum</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-num">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+
+                <textarea id="sandbox-editor-textarea" spellcheck="false" autocomplete="off" placeholder="// Type C or C++ code here... (Intellisense will auto-suggest keywords)">#include <stdio.h>
+
+int main() {
+    int x = 10;
+    int y = 20;
+    int sum = x + y;
+    
+    printf("Sum of %d and %d = %d\n", x, y, sum);
+    return 0;
+}</textarea>
+
+                <!-- Floating Intellisense Autocomplete Popup -->
+                <div class="intellisense-popup" id="sandbox-intellisense-popup">
+                  <!-- Dynamically populated by SandboxEngine -->
+                </div>
+              </div>
+
+              <div class="ide-status-bar-bottom">
+                <span>Ln 1, Col 1</span>
+                <span>C/C++ GCC Engine</span>
+                <span>UTF-8</span>
+              </div>
+            </div>
+
+            <!-- Interactive Terminal Console ("terminal" - BOTTOM LEFT) -->
+            <div class="sandbox-console-wrapper" style="margin-top:12px; position:relative;">
+              <div class="panel-label">
+                <span><i data-lucide="terminal"></i> Interactive Terminal Console</span>
+                <span class="terminal-status-badge" id="term-status-badge">🟢 Ready</span>
+              </div>
+              <div class="console-logs" id="sandbox-console-output" tabindex="0" title="Click to type directly inside terminal">
+                <div class="term-line output">> Ready. Click "Run C/C++ Code & Visualize" to compile and execute.</div>
+              </div>
+              <!-- Hidden Focus Receiver for Real Terminal Typing -->
+              <input type="text" id="hidden-terminal-input" style="position:absolute; opacity:0; pointer-events:none; width:1px; height:1px; top:0; left:0;" autocomplete="off" />
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Evaluation Thread (Top) + Heap Map Visualizer (Bottom) -->
+          <div class="sandbox-right-panel">
+            
+            <!-- IDE CALL STACK EVALUATION THREAD PANEL ("evaluation" - TOP RIGHT) -->
+            <div class="debugger-ide-panel" id="debugger-ide-panel" style="background:#090d16; border:1px solid rgba(56,189,248,0.3); border-radius:var(--radius-md); padding:8px 12px; box-shadow:0 4px 16px rgba(0,0,0,0.5);">
+              
+              <!-- Evaluation Thread Header -->
+              <div style="font-size:0.75rem; font-weight:700; color:#94a3b8; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                <span style="display:flex; align-items:center; gap:6px; color:#38bdf8;"><i data-lucide="hourglass" style="width:13px; height:13px;"></i> [20] Evaluation thread</span>
+                <span style="font-size:0.68rem; color:#64748b;">GDB / LLDB Target: main.cpp</span>
+              </div>
+
+              <!-- Live Call Stack Frames & Scope List -->
+              <div class="dbg-callstack-box" id="debugger-callstack-list" style="display:flex; flex-direction:column; gap:4px; font-family:var(--font-code); font-size:0.72rem; max-height:200px; overflow-y:auto; padding-right:4px;">
+                <div style="display:flex; align-items:center; gap:6px; color:#e2e8f0; background:rgba(255,255,255,0.04); padding:3px 8px; border-radius:4px;">
+                  <span style="color:#38bdf8;">📋</span> <span><strong>Function:</strong> <code style="color:#00f5d4;">main()</code> (Line 3) at memory <code style="color:#c084fc;">0x7ffe00</code></span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Live Stack & Heap Memory Visualizer Graph ("head map and visual" - BOTTOM RIGHT) -->
+            <div class="sandbox-memory-wrapper" style="margin-top:12px;">
+              <div class="panel-label"><i data-lucide="cpu"></i> Live Stack & Heap Memory Allocation Graph</div>
+              <div class="memory-graph-box" id="sandbox-memory-vis">
+                <!-- Rendered dynamically by SandboxEngine -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="view-section">
+      <div class="dashboard-container">
+        <div class="dashboard-header">
+          <h2><i data-lucide="layout-dashboard"></i> Developer Learning Dashboard</h2>
+          <p>Track your course progress, Google Drive & offline videos attached, and visual achievements.</p>
+        </div>
+
+        <div class="dash-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon cyan"><i data-lucide="award"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-completed-lessons">0</span>
+              <span class="stat-label">Lessons Completed</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple"><i data-lucide="video"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-offline-videos">0</span>
+              <span class="stat-label">Videos Linked (GDrive/Local)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green"><i data-lucide="zap"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-streak-count">3 Days</span>
+              <span class="stat-label">Learning Streak</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon yellow"><i data-lucide="check-square"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-quiz-score">100%</span>
+              <span class="stat-label">Avg Quiz Accuracy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tables-split">
+          <!-- Offline / Videos Linked Table -->
+          <div class="dash-card">
+            <h3><i data-lucide="hard-drive"></i> Video Library Registry</h3>
+            <p class="card-subtext">Manage video files mapped to course lessons.</p>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Lesson Name</th>
+                    <th>Linked Source</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="offline-videos-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Course Activity -->
+          <div class="dash-card">
+            <h3><i data-lucide="clock"></i> Recent Progress</h3>
+            <div class="recent-list" id="recent-activity-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ADMIN CONTROL CENTER VIEW -->
+    <section id="view-admin" class="view-section">
+      <div class="admin-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <div class="admin-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:16px;">
+          <div>
+            <h2><i data-lucide="shield-check" style="color:var(--accent-purple);"></i> Platform Admin & Playlist Hierarchy Manager</h2>
+            <p style="color:var(--text-subtle); font-size:0.85rem;">Manage courses, sub-category modules, lesson playlist links, and C source code snippets for end users.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline btn-sm" id="admin-btn-clear-all" style="border-color:rgba(239,68,68,0.5); color:#ef4444;"><i data-lucide="trash-2"></i> Clear All Links</button>
+            <button class="btn btn-primary btn-sm" id="admin-btn-save-all"><i data-lucide="save"></i> Save All Hierarchy Changes</button>
+          </div>
+        </div>
+
+        <div class="admin-grid" style="display:grid; grid-template-columns: 340px 1fr; gap:20px;">
+          <!-- Left: 3-Level Category & Playlist Tree -->
+          <div class="admin-tree-card" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px;">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-size:0.95rem; font-weight:700;"><i data-lucide="folder-tree"></i> Course Hierarchy Tree</h3>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button id="admin-btn-add-course" title="Add New Main Branch / Course" style="height:22px; padding:0 8px; font-size:0.68rem; font-weight:600; border-radius:4px; background:rgba(0,245,212,0.12); color:#00f5d4; border:1px solid rgba(0,245,212,0.4); box-shadow:0 0 8px rgba(0,245,212,0.25); cursor:pointer; display:inline-flex; align-items:center; gap:4px;"><i data-lucide="plus" style="width:11px; height:11px;"></i> Branch</button>
+                <button id="admin-btn-add-module" title="Add Sub-Category Module" style="height:22px; padding:0 8px; font-size:0.68rem; font-weight:600; border-radius:4px; background:rgba(168,85,247,0.12); color:#c084fc; border:1px solid rgba(168,85,247,0.4); box-shadow:0 0 8px rgba(168,85,247,0.25); cursor:pointer; display:inline-flex; align-items:center; gap:4px;"><i data-lucide="folder-plus" style="width:11px; height:11px;"></i> Sub-Cat</button>
+                <button id="admin-btn-add-lesson" title="Add Playlist Lesson" style="height:22px; padding:0 8px; font-size:0.68rem; font-weight:600; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.4); box-shadow:0 0 8px rgba(56,189,248,0.25); cursor:pointer; display:inline-flex; align-items:center; gap:4px;"><i data-lucide="file-plus" style="width:11px; height:11px;"></i> Lesson</button>
+              </div>
+            </div>
+            <div id="admin-hierarchy-tree" style="display:flex; flex-direction:column; gap:8px; max-height:650px; overflow-y:auto;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Right: Selected Lesson Editor -->
+          <div class="admin-editor-card" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px;">
+            <h3 style="font-size:1rem; font-weight:700; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;"><i data-lucide="edit"></i> Lesson & Playlist Link Details</h3>
+            
+            <form id="admin-lesson-form" style="display:flex; flex-direction:column; gap:14px;">
+              <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:4px; color:var(--accent-cyan);">Selected Lesson Title:</label>
+                <input type="text" id="admin-input-title" class="form-input" style="width:100%; font-weight:600;">
+              </div>
+
+              <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:4px; color:var(--accent-purple);">Video Stream / Source Link:</label>
+                <input type="text" id="admin-input-video-url" class="form-input" placeholder="https://..." style="width:100%;">
+              </div>
+
+              <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:4px;">Video Duration:</label>
+                <input type="text" id="admin-input-duration" class="form-input" placeholder="e.g. 10 mins" style="width:100%;">
+              </div>
+
+              <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:4px;">C Source Code Snippet:</label>
+                <textarea id="admin-input-code" class="form-input" rows="10" style="font-family:var(--font-code); font-size:0.85rem; width:100%; background:#0f172a; color:#38bdf8;"></textarea>
+              </div>
+
+              <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                <button type="button" class="btn btn-secondary btn-sm" id="admin-btn-preview-lesson"><i data-lucide="eye"></i> Preview in Player</button>
+                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check"></i> Save Lesson Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Student Account Credentials Management Panel -->
+        <div style="margin-top:24px; background:var(--bg-card); border:1px solid rgba(168,85,247,0.3); border-radius:var(--radius-md); padding:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px;">
+                <i data-lucide="users" style="color:#a855f7;"></i> Student Login Credentials Manager
+              </h3>
+              <p style="font-size:0.8rem; color:var(--text-subtle); margin-top:2px;">As Admin, create and set usernames & passwords for students to access the platform.</p>
+            </div>
+            <button class="btn btn-sm btn-primary" id="btn-admin-add-student" style="background:#a855f7; border:none; color:#fff; font-weight:700; display:flex; align-items:center; gap:6px;">
+              <i data-lucide="user-plus"></i> Create New Student Account
+            </button>
+          </div>
+
+          <div id="admin-students-list-box">
+            <!-- Dynamic Table of Registered Student Credentials -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Modal for Video Uploading / Google Drive URL Linker -->
+  <div class="modal-backdrop" id="modal-video-upload">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i data-lucide="file-video"></i> Attach Video (Google Drive / Offline)</h3>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn-xs btn-outline" id="btn-clear-all-gdrive" style="border-color:rgba(239,68,68,0.5); color:#ef4444;" title="Remove all saved Google Drive video links"><i data-lucide="trash-2"></i> Clear All Links</button>
+          <button class="btn-close-modal" id="btn-close-video-modal"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:14px; background:rgba(0,0,0,0.2); padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+          <label style="font-size:0.82rem; font-weight:600; color:var(--accent-cyan); display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+            <i data-lucide="book-open"></i> Select Target Lesson to Attach Video To:
+          </label>
+          <select id="modal-lesson-select" class="form-input" style="width:100%; font-weight:600; background:var(--bg-dark); color:var(--text-main); border:1px solid var(--border-highlight);"></select>
+        </div>
+        
+        <!-- Google Drive URL Form Section -->
+        <div class="gdrive-form-box">
+          <label style="font-size:0.85rem; font-weight:600; color:var(--accent-cyan); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <i data-lucide="link"></i> Google Drive Shareable Link
+          </label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="gdrive-url-input" class="form-input" placeholder="Paste Google Drive share link (e.g. https://drive.google.com/file/d/1A2B.../view)" style="flex:1;">
+            <button class="btn btn-primary btn-sm" id="btn-save-gdrive-url">Attach GDrive</button>
+          </div>
+        </div>
+
+        <div class="or-divider"><span>OR ATTACH LOCAL FILE</span></div>
+
+        <div class="dropzone-modal" id="modal-file-dropzone">
+          <i data-lucide="upload-cloud" class="modal-drop-icon"></i>
+          <p>Drag & Drop local video file here or select from Google Drive Synced folder</p>
+          <button class="btn btn-secondary" id="btn-modal-choose-file">
+            <i data-lucide="folder-open"></i> Browse Local File (.mp4, .webm)
+          </button>
+          <input type="file" id="modal-file-input" accept="video/mp4,video/webm,video/mkv" style="display:none;">
+        </div>
+
+        <div class="or-divider"><span>OR USE DEMO VIDEO</span></div>
+
+        <button class="btn btn-outline btn-block" id="btn-use-sample-video">
+          <i data-lucide="play"></i> Use Built-in Interactive Demonstration Video
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN & CREDENTIALS MODAL -->
+  <div class="modal-overlay" id="auth-modal" style="display:none; position:fixed; inset:0; z-index:2000; background:rgba(2,6,23,0.85); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+    <div class="modal-card" style="background:#0f172a; border:1px solid rgba(56,189,248,0.3); width:100%; max-width:420px; border-radius:12px; padding:24px; box-shadow:0 20px 50px rgba(0,0,0,0.7); position:relative;">
+      
+      <button id="btn-close-auth-modal" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">✕</button>
+
+      <div style="text-align:center; margin-bottom:20px;">
+        <div style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; background:rgba(56,189,248,0.15); color:#38bdf8; border-radius:50%; margin-bottom:10px;">
+          <i data-lucide="shield-check" style="width:24px; height:24px;"></i>
+        </div>
+        <h2 style="font-size:1.4rem; font-weight:800; color:#fff; margin:0;">Log2Code Auth Portal</h2>
+        <p style="font-size:0.8rem; color:#94a3b8; margin-top:4px;">Sign in as Student or Admin</p>
+      </div>
+
+      <!-- Role Tabs Switcher -->
+      <div style="display:flex; background:rgba(255,255,255,0.05); padding:4px; border-radius:8px; margin-bottom:20px;">
+        <button class="auth-role-tab active" id="tab-login-student" style="flex:1; padding:8px; border:none; border-radius:6px; background:#38bdf8; color:#000; font-weight:700; font-size:0.8rem; cursor:pointer;">
+          👨‍🎓 Student
+        </button>
+        <button class="auth-role-tab" id="tab-login-admin" style="flex:1; padding:8px; border:none; border-radius:6px; background:transparent; color:#94a3b8; font-weight:700; font-size:0.8rem; cursor:pointer;">
+          🛡️ Admin
+        </button>
+      </div>
+
+      <!-- Auth Form -->
+      <form id="form-auth-login">
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.75rem; font-weight:700; color:#cbd5e1; margin-bottom:4px;">Username or Email</label>
+          <input type="text" id="auth-input-username" value="" placeholder="Enter Username or Email" style="width:100%; padding:10px 12px; background:#020617; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-size:0.88rem; outline:none;" required>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <label style="display:block; font-size:0.75rem; font-weight:700; color:#cbd5e1; margin-bottom:4px;">Password</label>
+          <input type="password" id="auth-input-password" value="" placeholder="Enter Password" style="width:100%; padding:10px 12px; background:#020617; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-size:0.88rem; outline:none;" required>
+        </div>
+
+        <div id="auth-error-msg" style="display:none; color:#ef4444; font-size:0.75rem; font-weight:700; margin-bottom:12px; text-align:center;"></div>
+
+        <button type="submit" id="btn-submit-auth" style="width:100%; padding:12px; background:#38bdf8; color:#000; border:none; border-radius:6px; font-weight:800; font-size:0.9rem; cursor:pointer; box-shadow:0 4px 14px rgba(56,189,248,0.4);">
+          Sign In to Portal
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- App Entry Point Script -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

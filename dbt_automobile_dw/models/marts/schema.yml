@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: fct_sales_performance
+    description: "Monthly aggregated sales performance mart grouped by make, model, fuel type, transmission, and dealer code."
+    columns:
+      - name: delivery_month
+        description: "Year-Month delivery bucket"
+        tests:
+          - not_null
+
+      - name: total_deliveries
+        description: "Total count of vehicle deliveries"
+        tests:
+          - not_null
+
+  - name: fct_dealership_summary
+    description: "Summary data mart aggregating delivery volume, active sales consultants, and total receipts per dealership branch."
+    columns:
+      - name: dealer_code_id
+        description: "Unique Dealership Branch Identifier"
+        tests:
+          - not_null
+
+      - name: total_deliveries
+        description: "Total deliveries achieved by branch"
+        tests:
+          - not_null

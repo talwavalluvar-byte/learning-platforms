@@ -1,0 +1,11 @@
+automobile_dw_profile:
+  target: dev
+  outputs:
+    dev:
+      type: mysql
+      host: 127.0.0.1
+      port: 3306
+      user: root
+      password: Dhanshika@12
+      database: automobile_dw
+      schema: automobile_dw
