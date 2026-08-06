@@ -6,3 +6,6 @@ dist
 .DS_Store
 automobile-etl
 DataEngineering
+.venv
+venv
+__pycache__
