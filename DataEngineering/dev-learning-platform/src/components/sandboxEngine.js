@@ -423,10 +423,7 @@ export class SandboxEngine {
       const leftOffset = this.editor.scrollLeft;
 
       if (this.lineNumbers) {
-        const inner = this.lineNumbers.querySelector('.line-numbers-inner');
-        if (inner) {
-          inner.style.transform = `translateY(-${topOffset}px)`;
-        }
+        this.lineNumbers.scrollTop = topOffset;
       }
       if (this.syntaxOverlay) {
         this.syntaxOverlay.scrollTop = topOffset;

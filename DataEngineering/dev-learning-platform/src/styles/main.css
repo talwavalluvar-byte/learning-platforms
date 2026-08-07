@@ -4117,17 +4117,27 @@ body.light-theme .editor-body-relative {
 }
 
 .line-numbers-gutter {
-  width: 46px;
-  padding: 12px 6px;
+  width: 48px;
+  padding: 0;
   background: rgba(0, 0, 0, 0.2);
   border-right: 1px solid var(--border-color);
   color: var(--text-subtle);
   font-family: 'Fira Code', monospace;
   font-size: 0.84rem;
-  line-height: 1.6;
-  text-align: right;
   user-select: none;
   box-sizing: border-box;
+  overflow-y: scroll !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.line-numbers-gutter::-webkit-scrollbar {
+  display: none !important;
+}
+
+.line-numbers-inner {
+  padding-top: 12px !important;
+  padding-bottom: 60px !important;
 }
 
 body.light-theme .line-numbers-gutter {
