@@ -455,7 +455,7 @@ export class SandboxEngine {
   updateLineNumbers() {
     if (!this.lineNumbers || !this.editor) return;
     const lines = this.editor.value.split('\n').length;
-    let html = '<div class="line-numbers-inner">';
+    let html = '<div class="line-numbers-inner" style="padding-bottom: 30px;">';
     for (let i = 1; i <= lines; i++) {
       const isDebugActive = (this.isDebugging && this.currentDebugLine === i) ? 'debug-active-line' : '';
       const hasBreakpoint = this.breakpoints.has(i);

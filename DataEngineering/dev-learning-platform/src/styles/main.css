@@ -4137,10 +4137,10 @@ body.light-theme .line-numbers-gutter {
 }
 
 .line-num-cell {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
-  max-height: 20px !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
   font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
   font-size: 13px !important;
   display: flex !important;
@@ -4161,9 +4161,10 @@ body.light-theme .line-numbers-gutter {
 }
 
 .editor-code-line {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
   font-size: 13px !important;
   font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
   box-sizing: border-box !important;
