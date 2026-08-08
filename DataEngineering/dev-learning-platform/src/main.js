@@ -488,14 +488,13 @@ class DevBaseApp {
         }
       });
     }
-  }
 
     // Intercept switchView for View Gating:
     // Courses Catalog is public; all remaining views (Lesson Visualizer, Code Sandbox, Dashboard, Admin) require login!
     const originalSwitchView = this.switchView.bind(this);
     this.switchView = (viewId) => {
       if (viewId !== 'catalog' && viewId !== 'sandbox') {
-        if (!this.authSession.isLoggedIn || !this.authSession.user) {
+        if (!this.authSession || !this.authSession.isLoggedIn || !this.authSession.user) {
           const authModal = document.getElementById('auth-modal');
           if (authModal) authModal.style.display = 'flex';
           if (tabStudent) tabStudent.click();
