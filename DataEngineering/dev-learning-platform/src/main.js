@@ -352,6 +352,11 @@ class DevBaseApp {
   }
 
   setupAuthSystem() {
+    // Clear legacy auto-login if session isn't explicitly flagged active
+    if (!sessionStorage.getItem('log2code_active_login')) {
+      localStorage.removeItem('log2code_session');
+    }
+
     this.authSession = JSON.parse(localStorage.getItem('log2code_session') || '{"isLoggedIn":false,"user":null}');
     this.activeAuthRole = 'student';
 
@@ -407,6 +412,7 @@ class DevBaseApp {
       const logoutBtn = e.target.closest('#btn-user-logout');
       if (logoutBtn) {
         this.authSession = { isLoggedIn: false, user: null };
+        sessionStorage.removeItem('log2code_active_login');
         localStorage.removeItem('log2code_session');
         updateAuthUI();
         this.switchView('catalog');
@@ -459,6 +465,7 @@ class DevBaseApp {
             isLoggedIn: true,
             user: { name: 'System Admin', role: 'admin', email: 'admin@log2code.com' }
           };
+          sessionStorage.setItem('log2code_active_login', 'true');
           localStorage.setItem('log2code_session', JSON.stringify(this.authSession));
           updateAuthUI();
           if (authModal) authModal.style.display = 'none';
@@ -468,6 +475,7 @@ class DevBaseApp {
             isLoggedIn: true,
             user: { name: matchedStudent.name, role: 'student', email: matchedStudent.username }
           };
+          sessionStorage.setItem('log2code_active_login', 'true');
           localStorage.setItem('log2code_session', JSON.stringify(this.authSession));
           updateAuthUI();
           if (authModal) authModal.style.display = 'none';
@@ -480,6 +488,7 @@ class DevBaseApp {
         }
       });
     }
+  }
 
     // Intercept switchView for View Gating:
     // Courses Catalog is public; all remaining views (Lesson Visualizer, Code Sandbox, Dashboard, Admin) require login!
