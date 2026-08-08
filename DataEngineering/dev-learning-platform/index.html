@@ -53,14 +53,14 @@
     </div>
 
     <div class="nav-right">
-      <select id="sandbox-lang-select" class="form-select" style="padding:2px 8px; font-size:0.75rem; height:26px; border-radius:6px; background:#1e293b; color:#e2e8f0; border:1px solid rgba(255,255,255,0.12);">
+      <select id="sandbox-lang-select" class="form-select" style="padding:0 8px; font-size:0.75rem; height:28px; border-radius:2px; background:#1e293b; color:#e2e8f0; border:1px solid rgba(255,255,255,0.12); box-sizing:border-box;">
         <option value="c">C (GCC Compiler)</option>
         <option value="cpp">C++ (G++ Compiler)</option>
         <option value="java">☕ Java (JDK 21 Compiler)</option>
         <option value="python">🐍 Python (Python 3.12 Interpreter)</option>
       </select>
 
-      <select id="sandbox-template-select" class="form-select" style="padding:2px 8px; font-size:0.75rem; height:26px; border-radius:6px; background:#1e293b; color:#e2e8f0; border:1px solid rgba(255,255,255,0.12);">
+      <select id="sandbox-template-select" class="form-select" style="padding:0 8px; font-size:0.75rem; height:28px; border-radius:2px; background:#1e293b; color:#e2e8f0; border:1px solid rgba(255,255,255,0.12); box-sizing:border-box;">
         <option value="c-hello">⚡ C Hello World & Main</option>
         <option value="c-bubble-sort">1. 🫧 Bubble Sort</option>
         <option value="c-selection-sort">2. 🎯 Selection Sort</option>
@@ -103,7 +103,7 @@
 
       <!-- User Auth Profile / Login Button -->
       <div id="user-auth-box">
-        <button class="btn btn-sm btn-outline" id="btn-open-login" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; border:1px solid #38bdf8; color:#38bdf8; background:rgba(56,189,248,0.1); display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
+        <button class="btn btn-sm btn-outline" id="btn-open-login" style="height:28px; padding:0 10px; font-size:0.75rem; border-radius:2px; border:1px solid #38bdf8; color:#38bdf8; background:rgba(56,189,248,0.1); display:inline-flex; align-items:center; gap:6px; font-weight:700; cursor:pointer; box-sizing:border-box;">
           <i data-lucide="log-in"></i> Login
         </button>
       </div>
@@ -447,47 +447,44 @@
             
             <!-- IDE Code Editor with Intellisense & Line Numbers ("engion") -->
             <div class="sandbox-editor-wrapper">
-              <div class="ide-status-bar-top" style="display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:wrap; gap:8px;">
+              <div class="ide-status-bar-top" style="display:flex; align-items:center; justify-content:space-between; padding:4px 8px; background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:nowrap; overflow-x:auto; gap:6px;">
                 
                 <!-- LEFT SIDE: File Name -->
-                <div style="display:flex; align-items:center; gap:8px;">
+                <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
                   <span style="font-size:0.75rem; font-weight:700; color:#38bdf8; display:flex; align-items:center; gap:6px;">
                     <i data-lucide="file-code" style="width:14px; height:14px; color:#38bdf8;"></i> main.c / main.cpp
                   </span>
                 </div>
 
                 <!-- RIGHT SIDE: Full CLion / GDB Debugger Toolbar Suite -->
-                <div style="display:flex; align-items:center; gap:6px;">
-                  
-                  <button class="btn btn-secondary btn-sm" id="btn-toggle-focus-mode" title="Toggle Full View Focus Mode (Auto-Hide Top Navigation)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(168,85,247,0.2); color:#c084fc; border:1px solid rgba(168,85,247,0.4); font-weight:700;">
-                    <i data-lucide="maximize-2" style="width:12px; height:12px;"></i> <span id="focus-mode-btn-label">Full View IDE</span>
-                  </button>
+                <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
 
-                  <button class="btn btn-secondary btn-sm" id="btn-start-debug" title="Start Debugging (F5)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35);">
+                  <button class="btn btn-secondary btn-sm" id="btn-start-debug" title="Start Debugging (F5)" style="height:28px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); border-radius:2px; box-sizing:border-box;">
                     <i data-lucide="bug" style="width:12px; height:12px; color:#38bdf8;"></i> Start Debugger
                   </button>
 
-                  <button class="btn btn-outline btn-sm" id="btn-toggle-breakpoint" title="Toggle Breakpoint on Active Line (F9)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px;">
+                  <button class="btn btn-outline btn-sm" id="btn-toggle-breakpoint" title="Toggle Breakpoint on Active Line (F9)" style="height:28px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; border-radius:2px; box-sizing:border-box;">
                     <i data-lucide="circle-dot" style="width:12px; height:12px; color:#ef4444;"></i> Breakpoint (F9)
                   </button>
 
-                  <div class="debugger-btn-group" style="display:flex; align-items:center; gap:3px; background:rgba(15,23,42,0.8); padding:2px 4px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
-                    <button class="dbg-icon-btn" id="btn-reset-debug" title="Restart Debugger (Ctrl+F5)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="rotate-ccw" style="width:12px; height:12px;"></i></button>
-                    <button class="dbg-icon-btn" id="btn-stop-debug" title="Stop Debugger (Shift+F5)" style="width:24px; height:24px; border-radius:4px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="square" style="width:11px; height:11px; fill:#ef4444;"></i></button>
+                  <div class="debugger-btn-group" style="display:flex; align-items:center; gap:3px; background:rgba(15,23,42,0.8); padding:2px 4px; border-radius:2px; border:1px solid rgba(255,255,255,0.1);">
+                    <button class="dbg-icon-btn" id="btn-reset-debug" title="Restart Debugger (Ctrl+F5)" style="width:24px; height:24px; border-radius:2px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="rotate-ccw" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-stop-debug" title="Stop Debugger (Shift+F5)" style="width:24px; height:24px; border-radius:2px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="square" style="width:11px; height:11px; fill:#ef4444;"></i></button>
                     
                     <span style="width:1px; height:14px; background:rgba(255,255,255,0.15); margin:0 2px;"></span>
 
-                    <button class="dbg-icon-btn" id="btn-continue-debug" title="Resume / Continue Execution (F5)" style="width:24px; height:24px; border-radius:4px; background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="play" style="width:12px; height:12px; fill:#10b981;"></i></button>
-                    <button class="dbg-icon-btn" id="btn-step-over" title="Step Over (F10)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="corner-down-right" style="width:12px; height:12px;"></i></button>
-                    <button class="dbg-icon-btn" id="btn-step-into" title="Step Into (F11)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-down" style="width:12px; height:12px;"></i></button>
-                    <button class="dbg-icon-btn" id="btn-step-out" title="Step Out (Shift+F11)" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-up" style="width:12px; height:12px;"></i></button>
-                    <button class="dbg-icon-btn" id="btn-step-back" title="Step Back" style="width:24px; height:24px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-left" style="width:12px; height:12px;"></i></button>
-
-                    <span style="width:1px; height:14px; background:rgba(255,255,255,0.15); margin:0 2px;"></span>
-
+                    <button class="dbg-icon-btn" id="btn-continue-debug" title="Resume / Continue Execution (F5)" style="width:24px; height:24px; border-radius:2px; background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="play" style="width:12px; height:12px; fill:#10b981;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-over" title="Step Over (F10)" style="width:24px; height:24px; border-radius:2px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="corner-down-right" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-into" title="Step Into (F11)" style="width:24px; height:24px; border-radius:2px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-down" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-out" title="Step Out (Shift+F11)" style="width:24px; height:24px; border-radius:2px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-up" style="width:12px; height:12px;"></i></button>
+                    <button class="dbg-icon-btn" id="btn-step-back" title="Step Back" style="width:24px; height:24px; border-radius:2px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;"><i data-lucide="arrow-left" style="width:12px; height:12px;"></i></button>
                   </div>
 
-                  <button class="btn btn-primary btn-sm" id="btn-execute-sandbox" style="height:26px; padding:0 12px; font-size:0.75rem; font-weight:700; background:linear-gradient(135deg, #2563eb, #3b82f6); border:none; display:inline-flex; align-items:center; gap:4px;">
+                  <button class="btn btn-secondary btn-sm" id="btn-toggle-focus-mode" title="Toggle Full View Focus Mode (Auto-Hide Top Navigation)" style="height:28px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(168,85,247,0.2); color:#c084fc; border:1px solid rgba(168,85,247,0.4); font-weight:700; border-radius:2px; box-sizing:border-box; margin-left:4px;">
+                    <i data-lucide="maximize-2" style="width:12px; height:12px;"></i> <span id="focus-mode-btn-label">Full View IDE</span>
+                  </button>
+
+                  <button class="btn btn-primary btn-sm" id="btn-execute-sandbox" style="height:28px; padding:0 12px; font-size:0.75rem; font-weight:700; background:linear-gradient(135deg, #2563eb, #3b82f6); border:none; display:inline-flex; align-items:center; gap:4px; border-radius:2px; box-sizing:border-box;">
                     <i data-lucide="play" style="width:12px; height:12px;"></i> Run Code & Visualize
                   </button>
 
@@ -572,8 +569,8 @@ int main() {
             </div>
 
             <!-- Live Stack & Heap Memory Visualizer Graph ("head map and visual" - BOTTOM RIGHT) -->
-            <div class="sandbox-memory-wrapper" style="margin-top:12px;">
-              <div class="panel-label"><i data-lucide="cpu"></i> Live Stack & Heap Memory Allocation Graph</div>
+            <div class="sandbox-memory-wrapper" style="margin-top:4px; padding:4px 6px;">
+              <div class="panel-label" style="font-size:0.7rem; padding:2px 4px; margin-bottom:4px; height:20px; display:flex; align-items:center; gap:5px;"><i data-lucide="cpu" style="width:12px; height:12px;"></i> Live Stack & Heap Memory Allocation Graph</div>
               <div class="memory-graph-box" id="sandbox-memory-vis">
                 <!-- Rendered dynamically by SandboxEngine -->
               </div>

@@ -2229,11 +2229,13 @@ export class SandboxEngine {
       ` : '';
 
       html += `
-        <div class="mem-card-cell ${colorClass} ${v.highlighted ? 'highlight' : ''}">
-          <div style="font-size:0.68rem; color:#64748b; font-family:var(--font-code);">Address ${v.addr}</div>
-          <div style="font-size:1.05rem; font-weight:800; color:#fff; margin-top:2px;">${v.name}</div>
-          <div style="font-size:0.72rem; color:${v.isPointer ? '#f97316' : '#38bdf8'}; font-weight:600;">${v.type || 'int'}</div>
-          <div class="cell-val-row" style="font-size:1.1rem; font-weight:800; color:#10b981; margin-top:2px;">${v.value}</div>
+        <div class="mem-card-cell ${colorClass} ${v.highlighted ? 'highlight' : ''}" style="border-radius:10px !important; min-height:58px !important; padding:4px 8px !important;">
+          <div style="font-size:0.62rem; color:#64748b; font-family:var(--font-code); line-height:1;">Address ${v.addr}</div>
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-top:2px;">
+            <span style="font-size:0.85rem; font-weight:800; color:#fff;">${v.name}</span>
+            <span style="font-size:0.65rem; color:${v.isPointer ? '#f97316' : '#38bdf8'}; font-weight:600;">${v.type || 'int'}</span>
+          </div>
+          <div class="cell-val-row" style="font-size:0.88rem; font-weight:800; color:#10b981; margin-top:2px; line-height:1.1;">${v.value}</div>
           ${pointerBadge}
         </div>
       `;

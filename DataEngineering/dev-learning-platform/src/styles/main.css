@@ -48,10 +48,10 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.25);
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
 }
 
 /* Light Theme Mode Variable Tokens & Component Styles */
@@ -678,14 +678,15 @@ body.light-theme .ide-badge {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 auto !important;
-  padding: 6px 12px !important;
+  padding: 2px !important;
   box-sizing: border-box !important;
+  border-radius: 2px !important;
 }
 
 .sandbox-split {
   display: grid !important;
-  grid-template-columns: 70% calc(30% - 12px) !important;
-  gap: 12px !important;
+  grid-template-columns: 70% calc(30% - 8px) !important;
+  gap: 8px !important;
   width: 100% !important;
   align-items: start !important;
   box-sizing: border-box !important;
@@ -700,7 +701,7 @@ body.light-theme .ide-badge {
 .sandbox-left-panel {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 8px !important;
   width: 100% !important;
   min-width: 0 !important;
   box-sizing: border-box !important;
@@ -709,7 +710,7 @@ body.light-theme .ide-badge {
 .sandbox-right-panel {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 8px !important;
   width: 100% !important;
   min-width: 0 !important;
   box-sizing: border-box !important;
@@ -719,9 +720,9 @@ body.light-theme .ide-badge {
 .sandbox-editor-wrapper {
   width: 100% !important;
   max-width: 100% !important;
-  height: clamp(380px, 50vh, 560px) !important;
-  min-height: 380px !important;
-  max-height: 560px !important;
+  height: clamp(520px, 58vh, 660px) !important;
+  min-height: 520px !important;
+  max-height: 660px !important;
   display: flex !important;
   flex-direction: column !important;
   background: #0b0f19 !important;
@@ -773,14 +774,14 @@ body.light-theme .ide-badge {
 
   .sandbox-editor-wrapper {
     width: 100% !important;
-    height: 480px !important;
-    min-height: 380px !important;
-    max-height: 520px !important;
+    height: 560px !important;
+    min-height: 540px !important;
+    max-height: 640px !important;
   }
 
   .editor-body-relative {
-    height: calc(100% - 66px) !important;
-    min-height: 300px !important;
+    height: calc(100% - 38px) !important;
+    min-height: 500px !important;
   }
 
   .console-logs {
@@ -2607,16 +2608,16 @@ body {
 }
 
 .ide-inlay-hint {
-  color: #94a3b8;
+  color: #64748b;
   font-style: italic;
   font-size: 0.78rem;
-  margin-left: 14px;
-  background: rgba(148, 163, 184, 0.12);
-  padding: 1px 7px;
-  border-radius: 4px;
+  margin-left: 12px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
   font-family: var(--font-code);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: none;
+  box-shadow: none;
 }
 
 .code-output-box {
@@ -3416,46 +3417,47 @@ body.light-theme .step-num-badge {
 .mem-card-cell {
   background: var(--mem-cell-bg);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 10px 12px;
-  width: 130px;
-  min-height: 115px;
-  aspect-ratio: 1 / 1;
-  flex: 0 0 130px;
+  border-radius: 1px !important;
+  padding: 5px 8px !important;
+  width: 105px !important;
+  min-height: 58px !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  flex: 0 0 105px !important;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   word-break: break-word;
 }
 
 /* 4. Memory Color Coding Tokens */
 .mem-card-cell.type-normal {
-  border-left: 4px solid #38bdf8 !important; /* Blue normal variable */
+  border: 1px solid rgba(56, 189, 248, 0.35) !important; /* Blue normal variable */
 }
 .mem-card-cell.type-pointer {
-  border-left: 4px solid #f97316 !important; /* Orange pointer */
+  border: 1px solid rgba(249, 115, 22, 0.35) !important; /* Orange pointer */
   background: rgba(249, 115, 22, 0.06) !important;
 }
 .mem-card-cell.type-changed,
 .mem-card-cell.highlight {
-  border-left: 4px solid #10b981 !important; /* Green recently changed */
+  border: 1px solid rgba(16, 185, 129, 0.45) !important; /* Green recently changed */
   background: rgba(16, 185, 129, 0.08) !important;
   box-shadow: 0 0 14px rgba(16, 185, 129, 0.3) !important;
 }
 .mem-card-cell.type-struct {
-  border-left: 4px solid #a855f7 !important; /* Purple struct */
+  border: 1px solid rgba(168, 85, 247, 0.35) !important; /* Purple struct */
   background: rgba(168, 85, 247, 0.06) !important;
 }
 .mem-card-cell.type-freed {
-  border-left: 4px solid #ef4444 !important; /* Red freed memory */
+  border: 1px solid rgba(239, 68, 68, 0.35) !important; /* Red freed memory */
   background: rgba(239, 68, 68, 0.06) !important;
 }
 .mem-card-cell.type-uninit {
-  border-left: 4px solid #64748b !important; /* Gray uninitialized */
+  border: 1px solid rgba(100, 116, 139, 0.35) !important; /* Gray uninitialized */
 }
 
 /* 10. Value Transition Animation */
@@ -4200,20 +4202,19 @@ body.light-theme .line-numbers-gutter {
 
 .ide-inlay-hint,
 .editor-code-line .ide-inlay-hint {
-  color: #94a3b8 !important;
+  color: #64748b !important;
   font-style: italic !important;
   font-size: 11px !important;
-  margin-left: 14px !important;
-  background: rgba(148, 163, 184, 0.15) !important;
-  padding: 1px 6px !important;
-  border-radius: 4px !important;
+  margin-left: 12px !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
   font-family: 'Fira Code', Consolas, monospace !important;
-  border: 1px solid rgba(148, 163, 184, 0.25) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  vertical-align: middle !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: inline !important;
+  line-height: inherit !important;
+  vertical-align: baseline !important;
 }
 
 /* THE CRITICAL OVERLAY GEOMETRY MATCH: PRE & TEXTAREA */
@@ -4823,4 +4824,228 @@ button.admin-pill-btn:hover {
   background: linear-gradient(135deg, #2563eb, #38bdf8) !important;
   border: none !important;
   color: #ffffff !important;
+}
+
+/* ----------------------------------------------------
+   IDE & SANDBOX 2PX SLEEK BORDER RADIUS & COMPACT SPACING
+   ---------------------------------------------------- */
+.sandbox-container,
+.sandbox-editor-wrapper,
+.sandbox-console-wrapper,
+.debugger-ide-panel,
+.sandbox-memory-wrapper,
+.memory-graph-box,
+.mem-region,
+.mem-card-cell,
+.heap-block-card,
+.dbg-callstack-box,
+.ide-status-bar-top,
+.ide-status-bar-bottom,
+.btn,
+.btn-sm,
+.btn-secondary,
+.btn-outline,
+.btn-primary,
+.form-select,
+.form-control,
+.modal-card,
+#debugger-ide-panel,
+#sandbox-memory-vis,
+#hero-animated-debugger {
+  border-radius: 2px !important;
+}
+
+.sandbox-container {
+  padding: 2px !important;
+}
+
+/* HIDE HEIGHT-CONSUMING EDITOR BOTTOM STATUS BAR & TERMINAL HEADER LABEL */
+.ide-status-bar-bottom,
+.sandbox-console-wrapper .panel-label {
+  display: none !important;
+}
+
+.editor-body-relative {
+  height: calc(100% - 38px) !important;
+}
+
+.sandbox-console-wrapper {
+  margin-top: 4px !important;
+  height: auto !important;
+  min-height: 200px !important;
+}
+
+.console-logs {
+  min-height: 180px !important;
+  max-height: 340px !important;
+}
+
+/* COMPACT MEMORY GRAPH & RIGHT PANEL HEADERS */
+.sandbox-memory-wrapper {
+  padding: 4px 6px !important;
+  margin-top: 4px !important;
+}
+
+.sandbox-memory-wrapper .panel-label,
+.memory-graph-wrapper .panel-label {
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+  padding: 2px 4px !important;
+  margin-bottom: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 20px !important;
+  line-height: 1 !important;
+}
+
+.sandbox-memory-wrapper .panel-label i,
+.sandbox-memory-wrapper .panel-label svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.memory-graph-box {
+  padding: 4px 6px !important;
+}
+
+#debugger-ide-panel {
+  padding: 4px 6px !important;
+  margin-bottom: 4px !important;
+}
+
+/* UNIFORM 28PX HEIGHT ALIGNMENT FOR ALL NAVBAR BUTTONS & DROPDOWNS */
+header.navbar .nav-link,
+header.navbar select,
+header.navbar .syntax-theme-selector,
+header.navbar .syntax-theme-dropdown,
+header.navbar #user-auth-box button,
+header.navbar .user-profile-badge,
+header.navbar #btn-toggle-theme,
+header.navbar .btn-icon,
+header.navbar .btn {
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  line-height: 26px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  font-size: 0.74rem !important;
+  border-radius: 2px !important;
+  margin: 0 !important;
+  vertical-align: middle !important;
+}
+
+header.navbar #btn-toggle-theme {
+  width: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+}
+
+header.navbar .nav-links,
+header.navbar .nav-right,
+header.navbar .nav-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* RESPONSIVE FULL HEIGHT EQUALIZATION FOR LEFT & RIGHT PANELS */
+.sandbox-split {
+  display: grid !important;
+  grid-template-columns: 70% calc(30% - 8px) !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+}
+
+.sandbox-left-panel,
+.sandbox-right-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.sandbox-editor-wrapper {
+  flex: 1 1 auto !important;
+  height: clamp(480px, 55vh, 640px) !important;
+  min-height: 460px !important;
+}
+
+.editor-body-relative {
+  flex: 1 1 auto !important;
+  height: calc(100% - 38px) !important;
+}
+
+#sandbox-editor-textarea,
+.editor-syntax-highlight {
+  height: 100% !important;
+}
+
+.sandbox-console-wrapper {
+  flex: 0 0 auto !important;
+  height: 190px !important;
+  min-height: 190px !important;
+  margin-top: 4px !important;
+}
+
+.console-logs {
+  height: 100% !important;
+  min-height: 170px !important;
+}
+
+#debugger-ide-panel {
+  flex: 0 0 auto !important;
+  padding: 4px 6px !important;
+  margin-bottom: 4px !important;
+}
+
+.sandbox-memory-wrapper {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 4px 6px !important;
+  margin-top: 4px !important;
+}
+
+.memory-graph-box {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  padding: 4px 6px !important;
+  overflow-y: auto !important;
+}
+
+.ide-status-bar-top {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  flex: 0 0 38px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 10px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+}
+
+.ide-status-bar-top::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mem-card-cell,
+.heap-block-card {
+  border-left: none !important;
+  border-radius: 10px !important;
+  min-height: 58px !important;
+  height: auto !important;
+  padding: 4px 8px !important;
 }

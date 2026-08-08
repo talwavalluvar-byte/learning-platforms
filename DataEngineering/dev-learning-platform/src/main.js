@@ -361,22 +361,24 @@ class DevBaseApp {
 
       if (this.authSession.isLoggedIn && this.authSession.user) {
         const u = this.authSession.user;
-        const badgeColor = u.role === 'admin' ? '#a855f7' : '#38bdf8';
+        const badgeBg = u.role === 'admin' ? 'rgba(88, 28, 135, 0.45)' : 'rgba(30, 58, 138, 0.45)';
+        const badgeBorder = u.role === 'admin' ? '1px solid rgba(168,85,247,0.35)' : '1px solid rgba(56,189,248,0.35)';
+        const badgeText = u.role === 'admin' ? '#c084fc' : '#38bdf8';
         const roleLabel = u.role === 'admin' ? '🛡️ Admin' : '👨‍🎓 Student';
 
         authBox.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span style="background:${badgeColor}; color:#fff; font-size:0.72rem; font-weight:800; padding:3px 8px; border-radius:6px;">
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <span class="user-profile-badge" style="height:28px; line-height:26px; padding:0 10px; font-size:0.74rem; font-weight:700; background:${badgeBg}; border:${badgeBorder}; color:${badgeText}; border-radius:2px; display:inline-flex; align-items:center; gap:6px; box-sizing:border-box; vertical-align:middle;">
               ${roleLabel} (${u.name})
             </span>
-            <button id="btn-user-logout" title="Sign Out" style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#ef4444; padding:3px 8px; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;">
+            <button id="btn-user-logout" title="Sign Out" style="height:28px; line-height:26px; padding:0 10px; font-size:0.74rem; font-weight:700; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:#ef4444; border-radius:2px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; vertical-align:middle;">
               Logout
             </button>
           </div>
         `;
       } else {
         authBox.innerHTML = `
-          <button class="btn btn-sm btn-outline" id="btn-open-login" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; border:1px solid #38bdf8; color:#38bdf8; background:rgba(56,189,248,0.1); display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
+          <button class="btn btn-sm btn-outline" id="btn-open-login" style="height:28px; padding:0 10px; font-size:0.74rem; border-radius:2px; border:1px solid #38bdf8; color:#38bdf8; background:rgba(56,189,248,0.1); display:inline-flex; align-items:center; gap:6px; font-weight:700; cursor:pointer; box-sizing:border-box;">
             <i data-lucide="log-in"></i> Login
           </button>
         `;
