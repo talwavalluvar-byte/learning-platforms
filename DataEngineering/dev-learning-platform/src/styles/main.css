@@ -108,6 +108,23 @@ body.light-theme header.navbar {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
+/* AUTO-HIDE TOP NAVIGATION & FULL VIEW SANDBOX MODE */
+body.sandbox-focus-mode header.navbar {
+  display: none !important;
+}
+
+body.sandbox-focus-mode #floating-navbar-toggle {
+  display: flex !important;
+}
+
+body.sandbox-focus-mode #app-container {
+  padding-top: 10px !important;
+}
+
+body.sandbox-focus-mode .sandbox-container {
+  min-height: calc(100vh - 20px) !important;
+}
+
 header.navbar .logo-title,
 body[data-theme="light"] header.navbar .logo-title,
 body.light-theme header.navbar .logo-title {

@@ -111,8 +111,14 @@
       <button class="btn-icon" id="btn-toggle-theme" title="Toggle Light / Dark Mode">
         <i data-lucide="moon"></i>
       </button>
-    </div>
   </header>
+
+  <!-- Floating Header Toggle Button (Appears when navbar is auto-hidden in Sandbox Focus Mode) -->
+  <div id="floating-navbar-toggle" style="display:none; position:fixed; top:12px; right:16px; z-index:9999;">
+    <button id="btn-show-navbar" style="background:#0f172a; color:#38bdf8; border:1px solid rgba(56,189,248,0.4); padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.6); display:flex; align-items:center; gap:6px;">
+      <i data-lucide="eye"></i> Show Top Navigation
+    </button>
+  </div>
 
   <!-- Main App Viewports Container -->
   <main id="app-container">
@@ -453,6 +459,10 @@
                 <!-- RIGHT SIDE: Full CLion / GDB Debugger Toolbar Suite -->
                 <div style="display:flex; align-items:center; gap:6px;">
                   
+                  <button class="btn btn-secondary btn-sm" id="btn-toggle-focus-mode" title="Toggle Full View Focus Mode (Auto-Hide Top Navigation)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(168,85,247,0.2); color:#c084fc; border:1px solid rgba(168,85,247,0.4); font-weight:700;">
+                    <i data-lucide="maximize-2" style="width:12px; height:12px;"></i> <span id="focus-mode-btn-label">Full View IDE</span>
+                  </button>
+
                   <button class="btn btn-secondary btn-sm" id="btn-start-debug" title="Start Debugging (F5)" style="height:26px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35);">
                     <i data-lucide="bug" style="width:12px; height:12px; color:#38bdf8;"></i> Start Debugger
                   </button>

@@ -521,6 +521,18 @@ class DevBaseApp {
     this.initThemeController();
     this.initSyntaxThemeSelector();
 
+    const toggleFocusMode = () => {
+      document.body.classList.toggle('sandbox-focus-mode');
+      const isFocused = document.body.classList.contains('sandbox-focus-mode');
+      const focusLabel = document.getElementById('focus-mode-btn-label');
+      if (focusLabel) {
+        focusLabel.textContent = isFocused ? 'Normal View' : 'Full View IDE';
+      }
+    };
+
+    document.getElementById('btn-toggle-focus-mode')?.addEventListener('click', toggleFocusMode);
+    document.getElementById('btn-show-navbar')?.addEventListener('click', toggleFocusMode);
+
     document.getElementById('btn-hero-start')?.addEventListener('click', () => {
       this.switchView('player');
     });
@@ -749,6 +761,12 @@ class DevBaseApp {
 
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(`view-${viewId}`)?.classList.add('active');
+
+    if (viewId === 'sandbox') {
+      document.body.classList.add('sandbox-focus-mode');
+    } else {
+      document.body.classList.remove('sandbox-focus-mode');
+    }
 
     if (viewId === 'dashboard') {
       this.renderDashboard();
