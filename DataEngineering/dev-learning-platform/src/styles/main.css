@@ -5049,3 +5049,176 @@ header.navbar .nav-container {
   height: auto !important;
   padding: 4px 8px !important;
 }
+
+/* Header Navbar Icon-Only Default & Hover Text Reveal */
+header.navbar .nav-link {
+  height: 28px !important;
+  padding: 0 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 2px !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+header.navbar .nav-link .nav-text {
+  max-width: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, padding 0.2s ease !important;
+  display: inline-block !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  vertical-align: middle !important;
+  padding-left: 0 !important;
+}
+
+header.navbar .nav-link:hover .nav-text,
+header.navbar .nav-link:focus .nav-text {
+  max-width: 180px !important;
+  opacity: 1 !important;
+  padding-left: 6px !important;
+}
+
+#btn-toggle-password-visibility svg,
+#icon-toggle-password {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+#auth-input-password {
+  letter-spacing: 4px !important;
+}
+
+#auth-input-password::placeholder {
+  letter-spacing: normal !important;
+}
+
+/* Fixed IDE Layout: Stationed Top Debugging Toolbar & Internal Element Scrolling */
+body.sandbox-focus-mode {
+  overflow: hidden !important;
+}
+
+#view-sandbox.active {
+  height: calc(100vh - 60px) !important;
+  max-height: calc(100vh - 60px) !important;
+  overflow: hidden !important;
+}
+
+body.sandbox-focus-mode #view-sandbox.active {
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+.sandbox-container {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.sandbox-split {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.sandbox-left-panel {
+  height: 100% !important;
+  max-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.sandbox-editor-wrapper {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.ide-status-bar-top {
+  position: relative !important;
+  top: 0 !important;
+  flex-shrink: 0 !important;
+  height: 36px !important;
+  z-index: 200 !important;
+  background: #0f172a !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.editor-body-relative {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+#sandbox-editor-textarea {
+  flex: 1 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+}
+
+.sandbox-console-wrapper {
+  flex-shrink: 0 !important;
+  height: 160px !important;
+  overflow: hidden !important;
+}
+
+.sandbox-right-panel {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  padding-right: 4px !important;
+  box-sizing: border-box !important;
+}
+
+/* Panel Minimize / Collapse Toggle Buttons & State */
+.panel-collapse-btn {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #94a3b8 !important;
+  border-radius: 4px !important;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.panel-collapse-btn:hover {
+  background: rgba(56, 189, 248, 0.2) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.panel-collapse-btn svg,
+.panel-collapse-btn i {
+  width: 12px !important;
+  height: 12px !important;
+  transition: transform 0.25s ease !important;
+}
+
+.panel-card-collapsed .panel-collapse-btn svg,
+.panel-card-collapsed .panel-collapse-btn i {
+  transform: rotate(-180deg) !important;
+}
+
+.panel-card-collapsed .panel-body-content {
+  display: none !important;
+}

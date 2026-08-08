@@ -83,6 +83,7 @@ export class SandboxEngine {
 
     this.initEditorEvents();
     this.initTerminalInputEvents();
+    this.initComplexityPlayerEvents();
     this.updateLineNumbers();
     this.updateSyntaxHighlight();
     this.resetVisualizerDisplay();
@@ -470,7 +471,404 @@ export class SandboxEngine {
     this.updateSyntaxHighlight();
   }
 
+  analyzeCodeComplexity(rawCode = null, executedStepCount = 0) {
+    const code = rawCode !== null ? rawCode : (this.editor ? this.editor.value : '');
+    if (!code) return;
+
+    const badgeTimeEl = document.getElementById('complexity-badge-time');
+    const statTimeEl = document.getElementById('stat-time-complexity');
+    const statSpaceEl = document.getElementById('stat-space-complexity');
+    const statOpsEl = document.getElementById('stat-op-count');
+    const growthLabelEl = document.getElementById('complexity-growth-rate-label');
+    const barContainerEl = document.getElementById('complexity-visual-bar-container');
+    const explanationEl = document.getElementById('complexity-explanation-box');
+
+    const lines = code.split('\n');
+    let maxNestedLoops = 0;
+    let currentLoopDepth = 0;
+    let hasRecursion = false;
+    let hasDynamicMemory = false;
+    let has2DMemory = false;
+
+    // Detect true recursion: check if function calls itself inside its own body
+    const funcMatches = code.match(/(?:int|void|float|double|char\*?)\s+([a-zA-Z0-9_]+)\s*\([^)]*\)/g);
+    if (funcMatches) {
+      funcMatches.forEach(fm => {
+        const nameMatch = fm.match(/(?:int|void|float|double|char\*?)\s+([a-zA-Z0-9_]+)/);
+        if (nameMatch && nameMatch[1] && nameMatch[1] !== 'main') {
+          const fnName = nameMatch[1];
+          const fnHeaderIdx = code.indexOf(fm);
+          if (fnHeaderIdx !== -1) {
+            const bodyStartIndex = code.indexOf('{', fnHeaderIdx);
+            const bodyEndIndex = code.indexOf('\n}', bodyStartIndex);
+            if (bodyStartIndex !== -1 && bodyEndIndex !== -1) {
+              const fnBody = code.slice(bodyStartIndex, bodyEndIndex);
+              const recursiveCalls = (fnBody.match(new RegExp(`\\b${fnName}\\s*\\(`, 'g')) || []).length;
+              if (recursiveCalls > 0) {
+                hasRecursion = true;
+              }
+            }
+          }
+        }
+      });
+    }
+
+    const isBinarySearch = code.includes('/ 2') || code.includes('>>= 1') || code.includes('*= 2') || code.includes('low <= high') || code.includes('binarySearch');
+    const isSorting = code.includes('bubbleSort') || code.includes('quickSort') || code.includes('mergeSort') || code.includes('std::sort') || code.includes('qsort');
+
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (/^(for|while|do)\b/.test(trimmed)) {
+        currentLoopDepth++;
+        if (currentLoopDepth > maxNestedLoops) maxNestedLoops = currentLoopDepth;
+      }
+      if (trimmed.includes('}') && currentLoopDepth > 0) {
+        currentLoopDepth = Math.max(0, currentLoopDepth - 1);
+      }
+      if (trimmed.includes('malloc') || trimmed.includes('calloc') || trimmed.includes('new ') || trimmed.includes('vector<')) {
+        hasDynamicMemory = true;
+      }
+      if (trimmed.includes('malloc') && (trimmed.includes('* sizeof') || trimmed.includes('**'))) {
+        has2DMemory = true;
+      }
+    });
+
+    let timeComplexity = "O(1)";
+    let spaceComplexity = "O(1) Aux";
+    let badgeText = "O(1) Constant";
+    let badgeBg = "rgba(16,185,129,0.2)";
+    let badgeColor = "#10b981";
+    let badgeBorder = "rgba(16,185,129,0.4)";
+    let growthText = "Constant Execution Time";
+    let explanationHTML = "⚡ <strong>Constant Time:</strong> Code runs in O(1) time without looping over dynamic input.";
+    let barFillPercent = 15;
+    let barGradient = "linear-gradient(90deg, #10b981, #38bdf8)";
+
+    if (hasRecursion) {
+      timeComplexity = "O(2ᴺ)";
+      badgeText = "O(2ᴺ) Exponential";
+      badgeBg = "rgba(239,68,68,0.2)";
+      badgeColor = "#ef4444";
+      badgeBorder = "rgba(239,68,68,0.4)";
+      growthText = "Exponential Recursive Growth";
+      explanationHTML = "🔥 <strong>Exponential Complexity:</strong> Branching recursive calls generate O(2ᴺ) call stack depth.";
+      barFillPercent = 95;
+      barGradient = "linear-gradient(90deg, #f59e0b, #ef4444)";
+      spaceComplexity = "O(N) Stack";
+    } else if (maxNestedLoops >= 2 || (isSorting && !code.includes('std::sort'))) {
+      timeComplexity = "O(N²)";
+      badgeText = "O(N²) Quadratic";
+      badgeBg = "rgba(245,158,11,0.2)";
+      badgeColor = "#f59e0b";
+      badgeBorder = "rgba(245,158,11,0.4)";
+      growthText = "N=10 ➔ 100 Iterations";
+      explanationHTML = "🔥 <strong>Quadratic Complexity:</strong> Nested loops run N × N iterations. Operation count scales quadratically with input size N.";
+      barFillPercent = 80;
+      barGradient = "linear-gradient(90deg, #38bdf8, #f59e0b)";
+    } else if (isSorting || (maxNestedLoops === 1 && isBinarySearch)) {
+      timeComplexity = "O(N log N)";
+      badgeText = "O(N log N) Linearithmic";
+      badgeBg = "rgba(56,189,248,0.2)";
+      badgeColor = "#38bdf8";
+      badgeBorder = "rgba(56,189,248,0.4)";
+      growthText = "N=10 ➔ ~33 Iterations";
+      explanationHTML = "⚡ <strong>Linearithmic Complexity:</strong> Divide-and-conquer algorithm with log N partitioning steps across N items.";
+      barFillPercent = 55;
+      barGradient = "linear-gradient(90deg, #10b981, #38bdf8)";
+    } else if (maxNestedLoops === 1) {
+      if (isBinarySearch) {
+        timeComplexity = "O(log N)";
+        badgeText = "O(log N) Logarithmic";
+        badgeBg = "rgba(56,189,248,0.2)";
+        badgeColor = "#38bdf8";
+        badgeBorder = "rgba(56,189,248,0.4)";
+        growthText = "N=1000 ➔ 10 Operations";
+        explanationHTML = "⚡ <strong>Logarithmic Complexity:</strong> Search space is halved at each iteration step.";
+        barFillPercent = 30;
+      } else {
+        timeComplexity = "O(N)";
+        badgeText = "O(N) Linear";
+        badgeBg = "rgba(56,189,248,0.2)";
+        badgeColor = "#38bdf8";
+        badgeBorder = "rgba(56,189,248,0.4)";
+        growthText = "N=10 ➔ 10 Iterations";
+        explanationHTML = "⚡ <strong>Linear Complexity:</strong> Single loop iterates N times proportional to input array length.";
+        barFillPercent = 45;
+      }
+    }
+
+    if (has2DMemory) {
+      spaceComplexity = "O(N²) Heap";
+    } else if (hasDynamicMemory) {
+      spaceComplexity = "O(N) Heap";
+    }
+
+    if (badgeTimeEl) {
+      badgeTimeEl.textContent = badgeText;
+      badgeTimeEl.style.background = badgeBg;
+      badgeTimeEl.style.color = badgeColor;
+      badgeTimeEl.style.borderColor = badgeBorder;
+    }
+    if (statTimeEl) statTimeEl.textContent = timeComplexity;
+    if (statSpaceEl) statSpaceEl.textContent = spaceComplexity;
+    if (statOpsEl) statOpsEl.textContent = `${executedStepCount} Ops`;
+    if (growthLabelEl) growthLabelEl.textContent = growthText;
+    if (explanationEl) explanationEl.innerHTML = explanationHTML;
+    if (barContainerEl) {
+      barContainerEl.innerHTML = `<div style="width:${barFillPercent}%; height:100%; background:${barGradient}; border-radius:2px; transition:width 0.4s ease;"></div>`;
+    }
+    this.drawComplexityGraphCanvas();
+  }
+
+  initComplexityPlayerEvents() {
+    this.complexityCurrentStep = 1;
+    this.complexityMaxSteps = 1;
+    this.complexityIsPlaying = false;
+    this.complexityPlayTimer = null;
+    this.complexitySpeed = 0.75;
+    this.complexityGraphMode = 'ops';
+
+    const btnPrev = document.getElementById('btn-complexity-prev');
+    const btnPlay = document.getElementById('btn-complexity-play');
+    const btnNext = document.getElementById('btn-complexity-next');
+    const slider = document.getElementById('complexity-step-slider');
+    const speedSelect = document.getElementById('complexity-speed-select');
+    const tabOps = document.getElementById('tab-graph-ops');
+    const tabMem = document.getElementById('tab-graph-mem');
+
+    // Panel Collapse Toggle Handlers
+    document.getElementById('btn-toggle-eval-panel')?.addEventListener('click', () => {
+      document.getElementById('debugger-ide-panel')?.classList.toggle('panel-card-collapsed');
+    });
+
+    document.getElementById('btn-toggle-memory-panel')?.addEventListener('click', () => {
+      document.getElementById('sandbox-memory-card')?.classList.toggle('panel-card-collapsed');
+    });
+
+    document.getElementById('btn-toggle-complexity-panel')?.addEventListener('click', () => {
+      document.getElementById('debugger-complexity-panel')?.classList.toggle('panel-card-collapsed');
+    });
+
+    btnPrev?.addEventListener('click', () => {
+      this.pauseComplexityPlayer();
+      this.stepBack();
+    });
+
+    btnNext?.addEventListener('click', () => {
+      this.pauseComplexityPlayer();
+      this.stepOver();
+    });
+
+    btnPlay?.addEventListener('click', () => {
+      if (this.complexityIsPlaying) {
+        this.pauseComplexityPlayer();
+      } else {
+        this.startComplexityPlayer();
+      }
+    });
+
+    slider?.addEventListener('input', (e) => {
+      this.pauseComplexityPlayer();
+      const targetStep = parseInt(e.target.value) || 1;
+      if (this.executionTrace && this.executionTrace.length > 0) {
+        this.traceStepIdx = Math.max(0, Math.min(targetStep - 1, this.executionTrace.length - 1));
+        const activeStep = this.executionTrace[this.traceStepIdx];
+        this.currentDebugLine = activeStep ? activeStep.line : null;
+        this.updateLineNumbers();
+        this.runCodeAndVisualize(this.currentDebugLine);
+      }
+    });
+
+    speedSelect?.addEventListener('change', (e) => {
+      this.complexitySpeed = parseFloat(e.target.value) || 0.75;
+      if (this.complexityIsPlaying) {
+        this.pauseComplexityPlayer();
+        this.startComplexityPlayer();
+      }
+    });
+
+    tabOps?.addEventListener('click', () => {
+      this.complexityGraphMode = 'ops';
+      tabOps.style.background = '#38bdf8'; tabOps.style.color = '#000';
+      if (tabMem) { tabMem.style.background = 'transparent'; tabMem.style.color = '#94a3b8'; }
+      const yTitle = document.getElementById('graph-y-axis-title');
+      if (yTitle) yTitle.textContent = 'Y: operations';
+      this.drawComplexityGraphCanvas();
+    });
+
+    tabMem?.addEventListener('click', () => {
+      this.complexityGraphMode = 'mem';
+      tabMem.style.background = '#10b981'; tabMem.style.color = '#000';
+      if (tabOps) { tabOps.style.background = 'transparent'; tabOps.style.color = '#94a3b8'; }
+      const yTitle = document.getElementById('graph-y-axis-title');
+      if (yTitle) yTitle.textContent = 'Y: memory (bytes)';
+      this.drawComplexityGraphCanvas();
+    });
+
+    setTimeout(() => {
+      this.drawComplexityGraphCanvas();
+    }, 100);
+  }
+
+  startComplexityPlayer() {
+    this.complexityIsPlaying = true;
+    const playIcon = document.getElementById('icon-complexity-play');
+    if (playIcon) playIcon.setAttribute('data-lucide', 'pause');
+    if (window.lucide) lucide.createIcons();
+
+    if (!this.isDebugging || !this.executionTrace) {
+      this.startDebugging();
+    }
+
+    const intervalMs = Math.round(600 / this.complexitySpeed);
+    this.complexityPlayTimer = setInterval(() => {
+      if (this.executionTrace && this.traceStepIdx < this.executionTrace.length - 1) {
+        this.stepOver();
+      } else {
+        this.pauseComplexityPlayer();
+      }
+    }, intervalMs);
+  }
+
+  pauseComplexityPlayer() {
+    this.complexityIsPlaying = false;
+    if (this.complexityPlayTimer) {
+      clearInterval(this.complexityPlayTimer);
+      this.complexityPlayTimer = null;
+    }
+    const playIcon = document.getElementById('icon-complexity-play');
+    if (playIcon) playIcon.setAttribute('data-lucide', 'play');
+    if (window.lucide) lucide.createIcons();
+  }
+
+  syncComplexityWithDebugger() {
+    if (this.executionTrace && this.executionTrace.length > 0) {
+      this.complexityMaxSteps = this.executionTrace.length;
+      this.complexityCurrentStep = Math.min(this.traceStepIdx + 1, this.complexityMaxSteps);
+    } else {
+      this.complexityMaxSteps = 1;
+      this.complexityCurrentStep = 1;
+    }
+
+    const slider = document.getElementById('complexity-step-slider');
+    const counter = document.getElementById('complexity-step-counter');
+    const statOps = document.getElementById('stat-op-count');
+
+    if (slider) {
+      slider.max = this.complexityMaxSteps;
+      slider.value = this.complexityCurrentStep;
+    }
+    if (counter) {
+      counter.textContent = `${this.complexityCurrentStep} / ${this.complexityMaxSteps}`;
+    }
+    if (statOps) {
+      statOps.textContent = `${this.complexityCurrentStep} Ops`;
+    }
+
+    this.drawComplexityGraphCanvas();
+  }
+
+  updateComplexityPlayerUI() {
+    this.syncComplexityWithDebugger();
+  }
+
+  drawComplexityGraphCanvas() {
+    const canvas = document.getElementById('complexity-graph-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const paddingLeft = 35;
+    const paddingBottom = 22;
+    const paddingTop = 12;
+    const paddingRight = 12;
+    const plotWidth = width - paddingLeft - paddingRight;
+    const plotHeight = height - paddingTop - paddingBottom;
+
+    // Draw Grid Lines & Axis Labels
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px monospace';
+
+    // Y Axis Grid (0, 550, 1100, 1650, 2200, 2750)
+    const ySteps = [0, 550, 1100, 1650, 2200, 2750];
+    ySteps.forEach((val, idx) => {
+      const yPos = height - paddingBottom - (idx / (ySteps.length - 1)) * plotHeight;
+      ctx.beginPath();
+      ctx.moveTo(paddingLeft, yPos);
+      ctx.lineTo(width - paddingRight, yPos);
+      ctx.stroke();
+
+      ctx.fillText(val.toString(), 4, yPos + 3);
+    });
+
+    // X Axis Grid (n: 0, 10, 20, 30, 40, 50)
+    const xSteps = [0, 10, 20, 30, 40, 50];
+    xSteps.forEach((val, idx) => {
+      const xPos = paddingLeft + (idx / (xSteps.length - 1)) * plotWidth;
+      ctx.beginPath();
+      ctx.moveTo(xPos, paddingTop);
+      ctx.lineTo(xPos, height - paddingBottom);
+      ctx.stroke();
+
+      ctx.fillText(val.toString(), xPos - 5, height - 6);
+    });
+
+    const maxY = 2750;
+    const maxX = 50;
+    const progressRatio = (this.complexityCurrentStep / (this.complexityMaxSteps || 1));
+    const activeMaxX = maxX * progressRatio;
+
+    const curves = this.complexityGraphMode === 'mem' ? [
+      { name: 'O(1)', color: '#10b981', fn: (n) => 15 },
+      { name: 'O(log n)', color: '#06b6d4', fn: (n) => 40 * Math.log2(n + 1) },
+      { name: 'O(n)', color: '#d97706', fn: (n) => 10 * n },
+      { name: 'O(n²)', color: '#ef4444', fn: (n) => 1.05 * n * n }
+    ] : [
+      { name: 'O(1)', color: '#10b981', fn: (n) => 15 },
+      { name: 'O(log n)', color: '#06b6d4', fn: (n) => 80 * Math.log2(n + 1) },
+      { name: 'O(n)', color: '#d97706', fn: (n) => 12 * n },
+      { name: 'O(n log n)', color: '#a855f7', fn: (n) => 1.4 * n * Math.log2(n + 1) },
+      { name: 'O(n²)', color: '#ef4444', fn: (n) => 1.1 * n * n }
+    ];
+
+    curves.forEach(curve => {
+      ctx.beginPath();
+      ctx.lineWidth = 1.8;
+      ctx.strokeStyle = curve.color;
+
+      for (let n = 0; n <= activeMaxX; n += 0.5) {
+        const valY = curve.fn(n);
+        const xPos = paddingLeft + (n / maxX) * plotWidth;
+        const yPos = height - paddingBottom - (Math.min(valY, maxY) / maxY) * plotHeight;
+
+        if (n === 0) {
+          ctx.moveTo(xPos, yPos);
+        } else {
+          ctx.lineTo(xPos, yPos);
+        }
+      }
+      ctx.stroke();
+
+      if (activeMaxX > 0) {
+        const tipValY = curve.fn(activeMaxX);
+        const tipX = paddingLeft + (activeMaxX / maxX) * plotWidth;
+        const tipY = height - paddingBottom - (Math.min(tipValY, maxY) / maxY) * plotHeight;
+
+        ctx.beginPath();
+        ctx.arc(tipX, tipY, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = curve.color;
+        ctx.fill();
+      }
+    });
+  }
+
   updateSyntaxHighlight() {
+    this.analyzeCodeComplexity();
     if (!this.syntaxHighlightCode || !this.editor) return;
     const rawCode = this.editor.value;
     const lines = rawCode.split('\n');
@@ -1786,6 +2184,9 @@ export class SandboxEngine {
 
     // Render CLion / GDB Evaluation Thread & Call Stack UI Panel above Terminal
     this.renderDebuggerCallStackUI(maxLine, stackVars);
+
+    // Sync Complexity Player Step Counter, Slider & Scaling Graph Canvas
+    this.syncComplexityWithDebugger();
   }
 
   escapeHtml(str) {

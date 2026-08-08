@@ -427,6 +427,22 @@ class DevBaseApp {
     const errorMsg = document.getElementById('auth-error-msg');
     const authForm = document.getElementById('form-auth-login');
 
+    const togglePwdBtn = document.getElementById('btn-toggle-password-visibility');
+    togglePwdBtn?.addEventListener('click', () => {
+      if (passInput) {
+        const isPassword = passInput.type === 'password';
+        passInput.type = isPassword ? 'text' : 'password';
+        const pwdIcon = document.getElementById('icon-toggle-password');
+        if (pwdIcon) {
+          pwdIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        }
+        togglePwdBtn.style.color = isPassword ? '#38bdf8' : '#94a3b8';
+      }
+    });
+
     if (tabStudent && tabAdmin) {
       tabStudent.addEventListener('click', () => {
         this.activeAuthRole = 'student';
@@ -772,9 +788,7 @@ class DevBaseApp {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(`view-${viewId}`)?.classList.add('active');
 
-    if (viewId === 'sandbox') {
-      document.body.classList.add('sandbox-focus-mode');
-    } else {
+    if (viewId !== 'sandbox') {
       document.body.classList.remove('sandbox-focus-mode');
     }
 

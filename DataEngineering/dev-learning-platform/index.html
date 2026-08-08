@@ -34,20 +34,20 @@
       </div>
 
       <nav class="nav-links">
-        <button class="nav-link" data-view="catalog">
-          <i data-lucide="book-open"></i> Courses
+        <button class="nav-link" data-view="catalog" title="Courses">
+          <i data-lucide="book-open"></i><span class="nav-text">Courses</span>
         </button>
-        <button class="nav-link" data-view="player">
-          <i data-lucide="play-circle"></i> Lesson Visualizer
+        <button class="nav-link" data-view="player" title="Lesson Visualizer">
+          <i data-lucide="play-circle"></i><span class="nav-text">Lesson Visualizer</span>
         </button>
-        <button class="nav-link active" data-view="sandbox">
-          <i data-lucide="code-2"></i> Code Sandbox & Debugger
+        <button class="nav-link active" data-view="sandbox" title="Code Sandbox & Debugger">
+          <i data-lucide="code-2"></i><span class="nav-text">Code Sandbox & Debugger</span>
         </button>
-        <button class="nav-link" data-view="dashboard">
-          <i data-lucide="layout-dashboard"></i> My Dashboard
+        <button class="nav-link" data-view="dashboard" title="My Dashboard">
+          <i data-lucide="layout-dashboard"></i><span class="nav-text">My Dashboard</span>
         </button>
-        <button class="nav-link" data-view="admin">
-          <i data-lucide="shield"></i> Admin Control
+        <button class="nav-link" data-view="admin" title="Admin Control">
+          <i data-lucide="shield"></i><span class="nav-text">Admin Control</span>
         </button>
       </nav>
     </div>
@@ -447,7 +447,7 @@
             
             <!-- IDE Code Editor with Intellisense & Line Numbers ("engion") -->
             <div class="sandbox-editor-wrapper">
-              <div class="ide-status-bar-top" style="display:flex; align-items:center; justify-content:space-between; padding:4px 8px; background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:nowrap; overflow-x:auto; gap:6px;">
+              <div class="ide-status-bar-top" style="position:sticky; z-index:150; display:flex; align-items:center; justify-content:space-between; padding:4px 8px; background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:nowrap; overflow-x:auto; gap:6px;">
                 
                 <!-- LEFT SIDE: File Name -->
                 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
@@ -459,12 +459,12 @@
                 <!-- RIGHT SIDE: Full CLion / GDB Debugger Toolbar Suite -->
                 <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
 
-                  <button class="btn btn-secondary btn-sm" id="btn-start-debug" title="Start Debugging (F5)" style="height:28px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); border-radius:2px; box-sizing:border-box;">
-                    <i data-lucide="bug" style="width:12px; height:12px; color:#38bdf8;"></i> Start Debugger
+                  <button class="btn btn-secondary btn-sm" id="btn-start-debug" title="Start Debugger (F5)" style="height:28px; width:28px; padding:0; display:inline-flex; align-items:center; justify-content:center; background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); border-radius:2px; box-sizing:border-box;">
+                    <i data-lucide="bug" style="width:14px; height:14px; color:#38bdf8;"></i>
                   </button>
 
-                  <button class="btn btn-outline btn-sm" id="btn-toggle-breakpoint" title="Toggle Breakpoint on Active Line (F9)" style="height:28px; padding:0 8px; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; border-radius:2px; box-sizing:border-box;">
-                    <i data-lucide="circle-dot" style="width:12px; height:12px; color:#ef4444;"></i> Breakpoint (F9)
+                  <button class="btn btn-outline btn-sm" id="btn-toggle-breakpoint" title="Toggle Breakpoint on Active Line (F9)" style="height:28px; width:28px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:2px; box-sizing:border-box;">
+                    <i data-lucide="circle-dot" style="width:14px; height:14px; color:#ef4444;"></i>
                   </button>
 
                   <div class="debugger-btn-group" style="display:flex; align-items:center; gap:3px; background:rgba(15,23,42,0.8); padding:2px 4px; border-radius:2px; border:1px solid rgba(255,255,255,0.1);">
@@ -547,32 +547,143 @@ int main() {
 
           </div>
 
-          <!-- RIGHT COLUMN: Evaluation Thread (Top) + Heap Map Visualizer (Bottom) -->
+          <!-- RIGHT COLUMN: Evaluation Thread (Top) + Live Memory Graph (Middle) + Complexity Analyzer (Bottom) -->
           <div class="sandbox-right-panel">
             
             <!-- IDE CALL STACK EVALUATION THREAD PANEL ("evaluation" - TOP RIGHT) -->
-            <div class="debugger-ide-panel" id="debugger-ide-panel" style="background:#090d16; border:1px solid rgba(56,189,248,0.3); border-radius:var(--radius-md); padding:8px 12px; box-shadow:0 4px 16px rgba(0,0,0,0.5);">
-              
+            <div class="debugger-ide-panel" id="debugger-ide-panel" style="background:#090d16; border:1px solid rgba(56,189,248,0.3); border-radius:var(--radius-md); padding:8px 12px; margin-bottom:8px; box-shadow:0 4px 16px rgba(0,0,0,0.5);">
               <!-- Evaluation Thread Header -->
               <div style="font-size:0.75rem; font-weight:700; color:#94a3b8; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                 <span style="display:flex; align-items:center; gap:6px; color:#38bdf8;"><i data-lucide="hourglass" style="width:13px; height:13px;"></i> [20] Evaluation thread</span>
-                <span style="font-size:0.68rem; color:#64748b;">GDB / LLDB Target: main.cpp</span>
-              </div>
-
-              <!-- Live Call Stack Frames & Scope List -->
-              <div class="dbg-callstack-box" id="debugger-callstack-list" style="display:flex; flex-direction:column; gap:4px; font-family:var(--font-code); font-size:0.72rem; max-height:200px; overflow-y:auto; padding-right:4px;">
-                <div style="display:flex; align-items:center; gap:6px; color:#e2e8f0; background:rgba(255,255,255,0.04); padding:3px 8px; border-radius:4px;">
-                  <span style="color:#38bdf8;">📋</span> <span><strong>Function:</strong> <code style="color:#00f5d4;">main()</code> (Line 3) at memory <code style="color:#c084fc;">0x7ffe00</code></span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:0.68rem; color:#64748b;">GDB / LLDB Target: main.cpp</span>
+                  <button class="panel-collapse-btn" id="btn-toggle-eval-panel" title="Toggle Evaluation Thread Panel"><i data-lucide="chevron-down" style="width:12px; height:12px;"></i></button>
                 </div>
               </div>
 
+              <!-- Live Call Stack Frames & Scope List -->
+              <div class="panel-body-content" id="eval-panel-body">
+                <div class="dbg-callstack-box" id="debugger-callstack-list" style="display:flex; flex-direction:column; gap:4px; font-family:var(--font-code); font-size:0.72rem; max-height:200px; overflow-y:auto; padding-right:4px;">
+                  <div style="display:flex; align-items:center; gap:6px; color:#e2e8f0; background:rgba(255,255,255,0.04); padding:3px 8px; border-radius:4px;">
+                    <span style="color:#38bdf8;">📋</span> <span><strong>Function:</strong> <code style="color:#00f5d4;">main()</code> (Line 3) at memory <code style="color:#c084fc;">0x7ffe00</code></span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Live Stack & Heap Memory Visualizer Graph ("head map and visual" - BOTTOM RIGHT) -->
-            <div class="sandbox-memory-wrapper" style="margin-top:4px; padding:4px 6px;">
-              <div class="panel-label" style="font-size:0.7rem; padding:2px 4px; margin-bottom:4px; height:20px; display:flex; align-items:center; gap:5px;"><i data-lucide="cpu" style="width:12px; height:12px;"></i> Live Stack & Heap Memory Allocation Graph</div>
-              <div class="memory-graph-box" id="sandbox-memory-vis">
-                <!-- Rendered dynamically by SandboxEngine -->
+            <!-- Live Stack & Heap Memory Visualizer Graph ("head map and visual" - MIDDLE RIGHT) -->
+            <div class="sandbox-memory-wrapper" id="sandbox-memory-card" style="margin-bottom:8px; padding:4px 6px;">
+              <div class="panel-label" style="font-size:0.7rem; padding:2px 4px; margin-bottom:4px; height:22px; display:flex; align-items:center; justify-content:space-between;">
+                <span style="display:flex; align-items:center; gap:5px;"><i data-lucide="cpu" style="width:12px; height:12px;"></i> Live Stack & Heap Memory Allocation Graph</span>
+                <button class="panel-collapse-btn" id="btn-toggle-memory-panel" title="Toggle Memory Visualizer Panel"><i data-lucide="chevron-down" style="width:12px; height:12px;"></i></button>
+              </div>
+              <div class="panel-body-content" id="memory-panel-body">
+                <div class="memory-graph-box" id="sandbox-memory-vis">
+                  <!-- Rendered dynamically by SandboxEngine -->
+                </div>
+              </div>
+            </div>
+
+            <!-- TIME & SPACE COMPLEXITY ANALYSIS & VISUAL GRAPH PANEL (BOTTOM RIGHT) -->
+            <div class="debugger-complexity-panel" id="debugger-complexity-panel" style="background:#090d16; border:1px solid rgba(168,85,247,0.35); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:8px; box-shadow:0 4px 16px rgba(0,0,0,0.5);">
+              
+              <div style="font-size:0.75rem; font-weight:700; color:#c084fc; display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:6px;">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <i data-lucide="gauge" style="width:14px; height:14px; color:#c084fc;"></i> Time & Space Complexity Analysis
+                </span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span id="complexity-badge-time" style="background:rgba(168,85,247,0.2); color:#c084fc; border:1px solid rgba(168,85,247,0.4); padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:800; font-family:var(--font-code);">
+                    O(1) Constant
+                  </span>
+                  <button class="panel-collapse-btn" id="btn-toggle-complexity-panel" title="Toggle Complexity Panel"><i data-lucide="chevron-down" style="width:12px; height:12px;"></i></button>
+                </div>
+              </div>
+
+              <div class="panel-body-content" id="complexity-panel-body">
+
+              <!-- Metrics Summary Cards -->
+              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; margin-bottom:8px;">
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:6px; text-align:center;">
+                  <div style="font-size:0.64rem; color:#94a3b8; font-weight:600;">Time Complexity</div>
+                  <div id="stat-time-complexity" style="font-size:0.82rem; font-weight:800; color:#38bdf8; font-family:var(--font-code); margin-top:2px;">O(1)</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:6px; text-align:center;">
+                  <div style="font-size:0.64rem; color:#94a3b8; font-weight:600;">Space Complexity</div>
+                  <div id="stat-space-complexity" style="font-size:0.82rem; font-weight:800; color:#10b981; font-family:var(--font-code); margin-top:2px;">O(1) Aux</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:6px; text-align:center;">
+                  <div style="font-size:0.64rem; color:#94a3b8; font-weight:600;">Executed Steps</div>
+                  <div id="stat-op-count" style="font-size:0.82rem; font-weight:800; color:#f59e0b; font-family:var(--font-code); margin-top:2px;">0 Ops</div>
+                </div>
+              </div>
+
+              <!-- STEP PLAYER CONTROL BAR -->
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:6px 10px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:nowrap; gap:8px;">
+                
+                <!-- Playback Buttons: Prev, Play/Pause, Next -->
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <button id="btn-complexity-prev" title="Previous Step" style="width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.08); color:#cbd5e1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;">
+                    <i data-lucide="chevron-left" style="width:14px; height:14px;"></i>
+                  </button>
+                  <button id="btn-complexity-play" title="Play / Pause Animation" style="width:26px; height:26px; border-radius:50%; background:#38bdf8; color:#000; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; box-shadow:0 0 10px rgba(56,189,248,0.4);">
+                    <i data-lucide="play" id="icon-complexity-play" style="width:13px; height:13px; fill:#000;"></i>
+                  </button>
+                  <button id="btn-complexity-next" title="Next Step" style="width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.08); color:#cbd5e1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0;">
+                    <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>
+                  </button>
+                </div>
+
+                <!-- Step Scrubber Slider & Progress Counter -->
+                <div style="display:flex; align-items:center; gap:8px; flex:1; max-width:180px;">
+                  <input type="range" id="complexity-step-slider" min="1" max="13" value="13" style="flex:1; accent-color:#38bdf8; cursor:pointer; height:4px;">
+                  <span id="complexity-step-counter" style="font-family:var(--font-code); font-size:0.7rem; font-weight:800; color:#38bdf8; min-width:38px; text-align:right;">13 / 13</span>
+                </div>
+
+                <!-- Speed Control -->
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <span style="font-size:0.65rem; color:#94a3b8; font-weight:600;">Speed:</span>
+                  <select id="complexity-speed-select" style="background:#020617; border:1px solid rgba(255,255,255,0.15); color:#cbd5e1; font-size:0.65rem; border-radius:4px; padding:2px 4px; outline:none; cursor:pointer;">
+                    <option value="0.5">0.50x</option>
+                    <option value="0.75" selected>0.75x</option>
+                    <option value="1">1.00x</option>
+                    <option value="1.5">1.50x</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <!-- GRAPH CANVAS TYPE TABS (Operations vs Input Size | Memory vs Input Size) -->
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                <div style="display:flex; gap:4px; background:rgba(0,0,0,0.3); padding:2px; border-radius:4px;">
+                  <button class="complexity-graph-tab active" id="tab-graph-ops" style="padding:2px 8px; font-size:0.65rem; font-weight:700; border:none; border-radius:3px; background:#38bdf8; color:#000; cursor:pointer;">
+                    📈 Operations (n)
+                  </button>
+                  <button class="complexity-graph-tab" id="tab-graph-mem" style="padding:2px 8px; font-size:0.65rem; font-weight:700; border:none; border-radius:3px; background:transparent; color:#94a3b8; cursor:pointer;">
+                    💾 Memory (n)
+                  </button>
+                </div>
+                <span id="graph-y-axis-title" style="font-size:0.65rem; color:#94a3b8; font-weight:600; font-family:var(--font-code);">Y: operations</span>
+              </div>
+
+              <!-- REAL-TIME INTERACTIVE CANVAS GRAPH PLOT -->
+              <div style="position:relative; width:100%; height:180px; background:#040914; border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:6px; box-sizing:border-box; margin-bottom:8px;">
+                <canvas id="complexity-graph-canvas" width="340" height="168" style="width:100%; height:100%; display:block;"></canvas>
+              </div>
+
+              <!-- COLOR-CODED LEGEND -->
+              <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; font-size:0.65rem; font-family:var(--font-code); color:#cbd5e1; margin-bottom:6px;" id="complexity-graph-legend">
+                <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span> O(1)</span>
+                <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:#06b6d4;"></span> O(log n)</span>
+                <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:#d97706;"></span> O(n)</span>
+                <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:#a855f7;"></span> O(n log n)</span>
+                <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></span> O(n²)</span>
+              </div>
+
+              <!-- Line-by-Line Impact & Explanation -->
+              <div id="complexity-explanation-box" style="font-size:0.7rem; color:#cbd5e1; background:rgba(15,23,42,0.8); border:1px dashed rgba(168,85,247,0.3); border-radius:4px; padding:6px 8px; line-height:1.4;">
+                ⚡ <strong>Analysis:</strong> Code executes in constant time O(1) with 0 auxiliary heap allocation.
+              </div>
+
               </div>
             </div>
 
@@ -824,7 +935,12 @@ int main() {
 
         <div style="margin-bottom:20px;">
           <label style="display:block; font-size:0.75rem; font-weight:700; color:#cbd5e1; margin-bottom:4px;">Password</label>
-          <input type="password" id="auth-input-password" value="" placeholder="Enter Password" style="width:100%; padding:10px 12px; background:#020617; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-size:0.88rem; outline:none;" required>
+          <div style="position:relative; width:100%;">
+            <input type="password" id="auth-input-password" value="" placeholder="Enter Password" style="width:100%; padding:10px 44px 10px 14px; background:#020617; border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-size:0.92rem; letter-spacing:4px; outline:none; box-sizing:border-box;" required>
+            <button type="button" id="btn-toggle-password-visibility" title="Show / Hide Password" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#94a3b8; cursor:pointer; padding:4px; display:inline-flex; align-items:center; justify-content:center; transition:color 0.2s ease;">
+              <i data-lucide="eye" id="icon-toggle-password" style="width:20px; height:20px;"></i>
+            </button>
+          </div>
         </div>
 
         <div id="auth-error-msg" style="display:none; color:#ef4444; font-size:0.75rem; font-weight:700; margin-bottom:12px; text-align:center;"></div>
