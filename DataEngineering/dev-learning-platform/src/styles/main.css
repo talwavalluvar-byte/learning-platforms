@@ -903,27 +903,28 @@ body.light-theme .editor-body-relative {
 }
 
 .line-numbers-gutter {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
   width: 48px !important;
   height: 100% !important;
-  max-height: 100% !important;
-  overflow: hidden !important;
-  padding: 12px 6px 12px 4px !important;
+  padding: 0 !important;
+  margin: 0 !important;
   background: rgba(0, 0, 0, 0.25);
   border-right: 1px solid var(--border-color);
   color: var(--text-subtle);
-  font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
+  font-family: 'Fira Code', Consolas, 'Courier New', monospace !important;
   font-size: 13px !important;
-  line-height: 20px !important;
-  text-align: right;
   user-select: none;
   box-sizing: border-box;
   z-index: 3 !important;
-  pointer-events: auto !important;
+  overflow: hidden !important;
 }
 
 .line-numbers-inner {
-  display: flex;
-  flex-direction: column;
+  padding-top: 12px !important;
+  padding-bottom: 60px !important;
   will-change: transform;
 }
 
@@ -1124,6 +1125,8 @@ body.light-theme .mem-card-cell {
   box-shadow: 0 2px 8px rgba(2, 132, 199, 0.14);
   padding: 8px 12px;
   border-radius: var(--radius-sm);
+  width: 130px;
+  flex: 0 0 130px;
 }
 
 body.light-theme .cell-addr-hex {
@@ -2579,11 +2582,24 @@ body {
 }
 
 .code-line-highlight {
-  background: rgba(0, 242, 254, 0.15);
-  border-left: 3px solid var(--accent-cyan);
-  display: block;
+  background: rgba(37, 99, 235, 0.35) !important;
+  border-left: 4px solid #eab308 !important;
+  box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.25);
   margin: 0 -10px;
   padding: 0 8px;
+}
+
+.ide-inlay-hint {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.78rem;
+  margin-left: 14px;
+  background: rgba(148, 163, 184, 0.12);
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-family: var(--font-code);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .code-output-box {
@@ -3131,20 +3147,7 @@ body.light-theme .step-num-badge {
   background: #05070e;
 }
 
-.line-numbers-gutter {
-  width: 48px !important;
-  background: rgba(0, 0, 0, 0.4) !important;
-  border-right: 1px solid var(--border-color) !important;
-  padding: 12px 0 12px 0 !important;
-  margin: 0 !important;
-  font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
-  font-size: 0.88rem !important;
-  color: #475569 !important;
-  text-align: right !important;
-  user-select: none !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-}
+
 
 .line-numbers-gutter .debug-active-line {
   background: rgba(245, 158, 11, 0.35) !important;
@@ -3389,19 +3392,27 @@ body.light-theme .step-num-badge {
 .mem-cells-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  align-items: stretch;
 }
 
 .mem-card-cell {
   background: var(--mem-cell-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
-  min-width: 175px;
-  flex: 1 1 calc(50% - 10px);
+  padding: 10px 12px;
+  width: 130px;
+  min-height: 115px;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 130px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  word-break: break-word;
 }
 
 /* 4. Memory Color Coding Tokens */
@@ -4126,18 +4137,13 @@ body.light-theme .editor-body-relative {
   font-size: 0.84rem;
   user-select: none;
   box-sizing: border-box;
-  overflow-y: scroll !important;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-.line-numbers-gutter::-webkit-scrollbar {
-  display: none !important;
+  overflow: hidden !important;
 }
 
 .line-numbers-inner {
   padding-top: 12px !important;
   padding-bottom: 60px !important;
+  will-change: transform;
 }
 
 body.light-theme .line-numbers-gutter {
@@ -4151,39 +4157,46 @@ body.light-theme .line-numbers-gutter {
   line-height: 22px !important;
   min-height: 22px !important;
   max-height: 22px !important;
-  font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
+  font-family: 'Fira Code', Consolas, 'Courier New', monospace !important;
   font-size: 13px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-end !important;
-  gap: 4px !important;
+  display: block !important;
+  text-align: right !important;
   padding-right: 6px !important;
   padding-left: 2px !important;
   box-sizing: border-box !important;
 }
 
 .line-num-cell.debug-active-line {
-  color: #fbbf24 !important;
+  color: #fde047 !important;
   font-weight: 800 !important;
-  background: rgba(245, 158, 11, 0.35) !important;
-  border-left: 3px solid #f59e0b !important;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4) !important;
-}
-
-.editor-code-line {
-  height: 22px !important;
-  line-height: 22px !important;
-  min-height: 22px !important;
-  max-height: 22px !important;
-  font-size: 13px !important;
-  font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
-  box-sizing: border-box !important;
+  background: #1e3a8a !important;
+  border-left: 4px solid #eab308 !important;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
 }
 
 .editor-code-line.debug-active-code-line {
-  background: rgba(245, 158, 11, 0.22) !important;
+  background: rgba(37, 99, 235, 0.35) !important;
   border-radius: 2px !important;
-  box-shadow: inset 3px 0 0 #f59e0b !important;
+  border-left: 4px solid #eab308 !important;
+  box-shadow: inset 0 0 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.ide-inlay-hint,
+.editor-code-line .ide-inlay-hint {
+  color: #94a3b8 !important;
+  font-style: italic !important;
+  font-size: 11px !important;
+  margin-left: 14px !important;
+  background: rgba(148, 163, 184, 0.15) !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+  font-family: 'Fira Code', Consolas, monospace !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  vertical-align: middle !important;
 }
 
 /* THE CRITICAL OVERLAY GEOMETRY MATCH: PRE & TEXTAREA */
@@ -4200,7 +4213,7 @@ body.light-theme .line-numbers-gutter {
   padding: 12px !important;
   border: none !important;
   outline: none !important;
-  font-family: Consolas, 'Fira Code', 'Courier New', monospace !important;
+  font-family: 'Fira Code', Consolas, 'Courier New', monospace !important;
   font-size: 13px !important;
   line-height: 22px !important;
   letter-spacing: 0px !important;
@@ -4245,39 +4258,135 @@ body.light-theme #sandbox-editor-textarea::selection {
   -webkit-text-fill-color: transparent !important;
 }
 
-/* Floating Autocomplete Intellisense Popup */
+/* Floating Autocomplete Intellisense Popup (IntelliJ Minimal Design) */
 .intellisense-popup {
   position: absolute;
-  z-index: 100;
+  z-index: 200;
   display: none;
-  background: var(--bg-card);
-  border: 1px solid var(--border-highlight);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  max-height: 200px;
-  overflow-y: auto;
-  min-width: 220px;
+  background: #1e222b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  width: 320px;
+  max-height: 240px;
+  overflow: hidden;
+  font-family: 'Fira Code', Consolas, monospace;
+  padding: 4px;
 }
 
 .intellisense-popup.show {
-  display: block;
+  display: flex;
+  flex-direction: column;
+}
+
+.intellisense-items-list {
+  overflow-y: auto;
+  max-height: 190px;
+  padding-right: 2px;
 }
 
 .intellisense-item {
-  padding: 6px 10px;
+  padding: 4px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.78rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  border-radius: 4px;
+  height: 26px;
+  margin-bottom: 2px;
+  transition: background 0.1s ease;
+  border-bottom: none !important;
+}
+
+.intellisense-item .item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.intellisense-item .kind-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.intellisense-item .kind-badge.snippet,
+.intellisense-item .kind-badge.constant {
+  background: rgba(168, 85, 247, 0.3);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.intellisense-item .kind-badge.function {
+  background: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.intellisense-item .kind-badge.keyword,
+.intellisense-item .kind-badge.type {
+  background: rgba(0, 245, 212, 0.3);
+  color: #00f5d4;
+  border: 1px solid rgba(0, 245, 212, 0.4);
+}
+
+.intellisense-item .kind-badge.preprocessor {
+  background: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.intellisense-item .item-label {
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.intellisense-item .item-type-hint {
+  color: #64748b;
+  font-size: 11px;
+  font-family: var(--font-code);
 }
 
 .intellisense-item:hover,
 .intellisense-item.active {
-  background: rgba(56, 189, 248, 0.15);
-  color: var(--accent-cyan);
+  background: #2b3245;
+}
+
+.intellisense-item.active .item-label {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.intellisense-item.active .item-type-hint {
+  color: #94a3b8;
+}
+
+.intellisense-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 8px 2px 8px;
+  font-size: 10px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.intellisense-footer kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  padding: 0 4px;
+  color: #94a3b8;
+  font-size: 9px;
 }
 
 /* INTERACTIVE TERMINAL CONSOLE & INPUT BAR (ONLINE GDB STYLE) */

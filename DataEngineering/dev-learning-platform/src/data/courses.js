@@ -1099,7 +1099,7 @@ int main() {
 
 export const bubbleSortLesson = {
   id: "dsa-bubble-sort-visual",
-  title: "Bubble Sort Algorithm",
+  title: "Bubble Sort Algorithm (IntelliJ IDE Visual Debugger)",
   visualType: "dsa-bars",
   language: "c",
   codeSnippet: `#include <stdio.h>
@@ -1108,7 +1108,6 @@ void bubbleSort(int arr[], int n) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (arr[j] > arr[j + 1]) {
-                // Swap arr[j] and arr[j + 1]
                 int temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
@@ -1125,8 +1124,12 @@ int main() {
 }`,
   steps: [
     {
-      codeLine: 4,
-      explanation: "Initial Array: [64, 34, 25, 12, 22]",
+      codeLine: 18,
+      explanation: "main() execution starts. Array arr[] = {64, 34, 25, 12, 22} allocated.",
+      inlineHints: {
+        16: "arr[]: {64, 34, 25, 12, 22}",
+        17: "n: 5"
+      },
       dsaData: [
         { val: 64 },
         { val: 34 },
@@ -1136,8 +1139,28 @@ int main() {
       ]
     },
     {
-      codeLine: 7,
-      explanation: "Compare 64 and 34 (64 > 34 → Swap needed)",
+      codeLine: 3,
+      explanation: "Calling bubbleSort(arr, n). Pass array pointer 0x5ffe50 and size n = 5.",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5"
+      },
+      dsaData: [
+        { val: 64 },
+        { val: 34 },
+        { val: 25 },
+        { val: 12 },
+        { val: 22 }
+      ]
+    },
+    {
+      codeLine: 6,
+      explanation: "Pass 1, j = 0: Compare arr[0] (64) and arr[1] (34). 64 > 34 → Swap required.",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0",
+        5: "j: 0",
+        7: "temp: 64"
+      },
       dsaData: [
         { val: 64, status: "compare" },
         { val: 34, status: "compare" },
@@ -1148,7 +1171,13 @@ int main() {
     },
     {
       codeLine: 9,
-      explanation: "Swap 64 and 34 → Result: [34, 64, 25, 12, 22]",
+      explanation: "Swap 64 and 34 → Array becomes [34, 64, 25, 12, 22]",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0",
+        5: "j: 0",
+        7: "temp: 64"
+      },
       dsaData: [
         { val: 34, status: "swap" },
         { val: 64, status: "swap" },
@@ -1158,8 +1187,14 @@ int main() {
       ]
     },
     {
-      codeLine: 7,
-      explanation: "Compare 64 and 25 (64 > 25 → Swap needed)",
+      codeLine: 6,
+      explanation: "Pass 1, j = 1: Compare arr[1] (64) and arr[2] (25). 64 > 25 → Swap required.",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0",
+        5: "j: 1",
+        7: "temp: 64"
+      },
       dsaData: [
         { val: 34 },
         { val: 64, status: "compare" },
@@ -1170,7 +1205,13 @@ int main() {
     },
     {
       codeLine: 9,
-      explanation: "Swap 64 and 25 → Result: [34, 25, 64, 12, 22]",
+      explanation: "Swap 64 and 25 → Array becomes [34, 25, 64, 12, 22]",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0",
+        5: "j: 1",
+        7: "temp: 64"
+      },
       dsaData: [
         { val: 34 },
         { val: 25, status: "swap" },
@@ -1180,19 +1221,14 @@ int main() {
       ]
     },
     {
-      codeLine: 7,
-      explanation: "Compare 64 and 12 (64 > 12 → Swap needed)",
-      dsaData: [
-        { val: 34 },
-        { val: 25 },
-        { val: 64, status: "compare" },
-        { val: 12, status: "compare" },
-        { val: 22 }
-      ]
-    },
-    {
       codeLine: 9,
-      explanation: "Swap 64 and 12 → Result: [34, 25, 12, 64, 22]",
+      explanation: "Pass 1, j = 2: Executing arr[j + 1] = temp; (IntelliJ IDE active breakpoint step)",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0",
+        5: "j: 2",
+        7: "temp: 64"
+      },
       dsaData: [
         { val: 34 },
         { val: 25 },
@@ -1202,19 +1238,14 @@ int main() {
       ]
     },
     {
-      codeLine: 7,
-      explanation: "Compare 64 and 22 (64 > 22 → Swap needed)",
-      dsaData: [
-        { val: 34 },
-        { val: 25 },
-        { val: 12 },
-        { val: 64, status: "compare" },
-        { val: 22, status: "compare" }
-      ]
-    },
-    {
       codeLine: 9,
       explanation: "Swap 64 and 22 → Result: [34, 25, 12, 22, 64]",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0",
+        5: "j: 3",
+        7: "temp: 64"
+      },
       dsaData: [
         { val: 34 },
         { val: 25 },
@@ -1224,8 +1255,12 @@ int main() {
       ]
     },
     {
-      codeLine: 5,
-      explanation: "Pass 1 completed. 64 is now sorted.",
+      codeLine: 4,
+      explanation: "Pass 1 completed! Maximum element 64 bubbled to end index.",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 0"
+      },
       dsaData: [
         { val: 34 },
         { val: 25 },
@@ -1235,8 +1270,12 @@ int main() {
       ]
     },
     {
-      codeLine: 5,
-      explanation: "Pass 2 completed. 34 is now sorted.",
+      codeLine: 4,
+      explanation: "Pass 2 completed! Element 34 placed in sorted position.",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 1"
+      },
       dsaData: [
         { val: 25 },
         { val: 12 },
@@ -1246,8 +1285,12 @@ int main() {
       ]
     },
     {
-      codeLine: 5,
-      explanation: "Pass 3 completed. 25 is now sorted.",
+      codeLine: 4,
+      explanation: "Pass 3 completed! Element 25 placed in sorted position.",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 2"
+      },
       dsaData: [
         { val: 12 },
         { val: 22 },
@@ -1257,8 +1300,12 @@ int main() {
       ]
     },
     {
-      codeLine: 5,
-      explanation: "Bubble Sort Completed. Entire array is sorted!",
+      codeLine: 12,
+      explanation: "Bubble Sort Completed! Entire array sorted: [12, 22, 25, 34, 64]",
+      inlineHints: {
+        3: "arr: 0x5ffe50  n: 5",
+        4: "i: 4"
+      },
       dsaData: [
         { val: 12, status: "sorted" },
         { val: 22, status: "sorted" },

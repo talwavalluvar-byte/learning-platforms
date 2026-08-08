@@ -423,7 +423,10 @@ export class SandboxEngine {
       const leftOffset = this.editor.scrollLeft;
 
       if (this.lineNumbers) {
-        this.lineNumbers.scrollTop = topOffset;
+        const inner = this.lineNumbers.querySelector('.line-numbers-inner');
+        if (inner) {
+          inner.style.transform = `translateY(-${topOffset}px)`;
+        }
       }
       if (this.syntaxOverlay) {
         this.syntaxOverlay.scrollTop = topOffset;
@@ -457,13 +460,14 @@ export class SandboxEngine {
       const isDebugActive = (this.isDebugging && this.currentDebugLine === i) ? 'debug-active-line' : '';
       const hasBreakpoint = this.breakpoints.has(i);
       const bpDot = hasBreakpoint ? '<span class="bp-red-dot">🔴</span>' : '';
-      const prefix = isDebugActive ? '➜ ' : '';
+      const prefix = isDebugActive ? '➔ ' : '';
       
       html += `<div class="line-num-cell ${isDebugActive} ${hasBreakpoint ? 'has-bp' : ''}" data-line="${i}">${bpDot}${prefix}${i}</div>`;
     }
     html += '</div>';
     this.lineNumbers.innerHTML = html;
     this.syncScroll();
+    this.updateSyntaxHighlight();
   }
 
   updateSyntaxHighlight() {
@@ -472,15 +476,72 @@ export class SandboxEngine {
     const lines = rawCode.split('\n');
     let html = '';
 
+    let inlineHints = {};
+    if (this.isDebugging || this.currentDebugLine !== null) {
+      const currentLine = this.currentDebugLine || 1;
+      const isBubbleSort = rawCode.includes('bubbleSort');
+
+      if (isBubbleSort) {
+        if (!this.executionTrace) {
+          let arr = [64, 34, 25, 12, 22];
+          const match = rawCode.match(/int\s+arr\[\]\s*=\s*\{([^}]+)\};/);
+          if (match) {
+            arr = match[1].split(',').map(v => parseInt(v.trim()) || 0);
+          }
+          this.executionTrace = this.generateBubbleSortTrace(arr);
+        }
+
+        const stepIdx = (this.traceStepIdx !== undefined && this.traceStepIdx !== null) ? this.traceStepIdx : 0;
+        const step = (this.executionTrace && this.executionTrace[stepIdx]) ? this.executionTrace[stepIdx] : {};
+
+        lines.forEach((lineText, idx) => {
+          const lNo = idx + 1;
+          // Only show hints for lines that execution has reached or passed!
+          if (currentLine >= lNo || (step.line && step.line >= lNo)) {
+            if (lineText.includes('void bubbleSort') || lineText.includes('bubbleSort(')) {
+              inlineHints[lNo] = 'arr: 0x5ffe50  n: 5';
+            } else if (lineText.includes('for') && lineText.includes('int i =')) {
+              if (step.i !== undefined) inlineHints[lNo] = `i: ${step.i}`;
+            } else if (lineText.includes('for') && lineText.includes('int j =')) {
+              if (step.j !== undefined) inlineHints[lNo] = `j: ${step.j}`;
+            } else if (lineText.includes('int temp =')) {
+              if (step.temp !== undefined) {
+                inlineHints[lNo] = `temp: ${step.temp}`;
+              } else if (step.j !== undefined && step.arr) {
+                inlineHints[lNo] = `temp: ${step.arr[step.j] || 64}`;
+              }
+            }
+          }
+        });
+      } else if (this.executionTrace && this.executionTrace[this.traceStepIdx]) {
+        const step = this.executionTrace[this.traceStepIdx];
+        if (step.vars && Array.isArray(step.vars)) {
+          step.vars.forEach(v => {
+            // Find the line where variable v.name is declared/assigned
+            lines.forEach((lineText, idx) => {
+              const lNo = idx + 1;
+              const isDeclLine = new RegExp(`\\b(int|float|double|char|long|short|auto|struct|void)\\s+${v.name}\\b`).test(lineText) || new RegExp(`\\b${v.name}\\s*=\\s*`).test(lineText);
+              
+              // Only display hint on the declaration line IF execution has reached or passed that line!
+              if (isDeclLine && currentLine >= lNo && !inlineHints[lNo]) {
+                inlineHints[lNo] = `${v.name}: ${v.val}`;
+              }
+            });
+          });
+        }
+      }
+    }
+
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
       const isDebugActive = (this.isDebugging && this.currentDebugLine === lineNum);
       const highlightedCode = highlightCCode(lineText);
+      const hintText = inlineHints[lineNum] ? `<span class="ide-inlay-hint">${this.escapeHtml(inlineHints[lineNum])}</span>` : '';
 
       if (isDebugActive) {
-        html += `<div class="editor-code-line debug-active-code-line">${highlightedCode || ' '}</div>`;
+        html += `<div class="editor-code-line debug-active-code-line">${highlightedCode || ' '}${hintText}</div>`;
       } else {
-        html += `<div class="editor-code-line">${highlightedCode || ' '}</div>`;
+        html += `<div class="editor-code-line">${highlightedCode || ' '}${hintText}</div>`;
       }
     });
 
@@ -488,6 +549,7 @@ export class SandboxEngine {
   }
 
   handleIntellisense() {
+    if (!this.editor) return;
     const text = this.editor.value;
     const pos = this.editor.selectionStart;
 
@@ -501,7 +563,41 @@ export class SandboxEngine {
     }
 
     const query = match[1].toLowerCase();
-    this.filteredKeywords = C_CPP_KEYWORDS.filter(k => k.label.toLowerCase().includes(query));
+
+    // Dynamically parse local variables and parameters from editor code
+    const localVars = [];
+    const arrParamMatch = text.match(/(?:int|float|double|char)\s+([a-zA-Z0-9_]+)\[\]/g);
+    if (arrParamMatch) {
+      arrParamMatch.forEach(m => {
+        const name = m.split(/\s+/)[1].replace('[]', '');
+        localVars.push({ label: name, kind: 'snippet', type: 'int *', detail: 'int *' });
+      });
+    }
+
+    const varMatches = text.matchAll(/(int|float|double|char|void|size_t)\s+([a-zA-Z0-9_]+)(?:\s*=\s*[^;,]+)?;?/g);
+    for (const vMatch of varMatches) {
+      const vType = vMatch[1];
+      const vName = vMatch[2];
+      if (vName !== 'main' && vName !== 'bubbleSort' && vName !== 'if' && vName !== 'for' && vName !== 'while') {
+        if (!localVars.find(lv => lv.label === vName)) {
+          localVars.push({ label: vName, kind: 'snippet', type: vType, detail: vType });
+        }
+      }
+    }
+
+    const combinedKeywords = [...localVars, ...C_CPP_KEYWORDS];
+    
+    // Deduplicate by label
+    const seen = new Set();
+    const uniqueKeywords = [];
+    combinedKeywords.forEach(k => {
+      if (!seen.has(k.label)) {
+        seen.add(k.label);
+        uniqueKeywords.push(k);
+      }
+    });
+
+    this.filteredKeywords = uniqueKeywords.filter(k => k.label.toLowerCase().includes(query));
 
     if (this.filteredKeywords.length === 0) {
       this.hidePopup();
@@ -514,7 +610,19 @@ export class SandboxEngine {
   }
 
   showPopup() {
-    if (!this.popup) return;
+    if (!this.popup || !this.editor) return;
+    const pos = this.editor.selectionStart || 0;
+    const textBefore = this.editor.value.substring(0, pos);
+    const lines = textBefore.split('\n');
+    const lineNum = lines.length;
+    const colNum = lines[lines.length - 1].length;
+
+    const lineHeight = 22;
+    const topOffset = (lineNum * lineHeight) - this.editor.scrollTop + 14;
+    const leftOffset = Math.min((colNum * 8) + 54 - this.editor.scrollLeft, 350);
+
+    this.popup.style.top = `${Math.max(10, topOffset)}px`;
+    this.popup.style.left = `${Math.max(54, leftOffset)}px`;
     this.popup.classList.add('show');
   }
 
@@ -525,7 +633,7 @@ export class SandboxEngine {
 
   renderPopupItems() {
     if (!this.popup) return;
-    let html = '';
+    let html = '<div class="intellisense-items-list">';
     this.filteredKeywords.forEach((item, idx) => {
       const activeClass = (idx === this.selectedIndex) ? 'active' : '';
       const iconMap = {
@@ -535,21 +643,30 @@ export class SandboxEngine {
         class: 'c',
         struct: 's',
         constant: 'v',
-        snippet: 'p',
+        snippet: 'P',
         preprocessor: '#'
       };
-      const badge = iconMap[item.kind] || 'k';
+      const badge = iconMap[item.kind] || 'P';
+      const typeHint = item.type || (item.kind === 'function' ? 'func' : item.kind === 'preprocessor' ? 'macro' : 'keyword');
 
       html += `
         <div class="intellisense-item ${activeClass}" data-index="${idx}">
-          <div class="item-main">
+          <div class="item-left">
             <span class="kind-badge ${item.kind}">${badge}</span>
-            <span class="item-label">${item.label}</span>
+            <span class="item-label">${this.escapeHtml(item.label)}</span>
           </div>
-          <span class="item-detail">${item.detail}</span>
+          <span class="item-type-hint">${this.escapeHtml(typeHint)}</span>
         </div>
       `;
     });
+    html += '</div>';
+
+    // Minimal Footer Bar matching IntelliJ
+    html += `
+      <div class="intellisense-footer">
+        <span>Press <kbd>Enter</kbd> to insert, <kbd>Tab</kbd> to replace</span>
+      </div>
+    `;
 
     this.popup.innerHTML = html;
 
@@ -879,15 +996,157 @@ export class SandboxEngine {
     ];
   }
 
+  generateDynamicCodeTrace() {
+    const rawCode = this.editor ? this.editor.value : '';
+    if (!rawCode.trim()) return this.generateCHelloTrace();
+
+    const lines = rawCode.split('\n');
+    const trace = [];
+
+    let currentVars = [];
+    let baseStackAddr = 0x7ffe00;
+
+    let mainStartLine = 1;
+    lines.forEach((l, idx) => {
+      if (l.includes('int main') || l.includes('void main') || l.includes('main()')) {
+        mainStartLine = idx + 1;
+      }
+    });
+
+    trace.push({
+      line: mainStartLine,
+      type: 'mem-cells',
+      stackFrames: [`main() (main.c:${mainStartLine})`],
+      vars: [],
+      explanation: `Program execution entry at main() (line ${mainStartLine})`
+    });
+
+    lines.forEach((lineText, idx) => {
+      const lNo = idx + 1;
+      const trimmed = lineText.trim();
+
+      if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*') || trimmed.startsWith('#') || trimmed === '{' || trimmed === '}' || trimmed === 'return 0;' || trimmed.includes('int main')) {
+        return;
+      }
+
+      // 1. Detect Primitive Variable Declaration (int a = 10; float rate = 5.5; char ch = 'A';)
+      const varDeclMatch = trimmed.match(/(int|float|double|char|long|short|bool)\s+([a-zA-Z0-9_]+)(?:\s*=\s*(.+))?;/);
+      if (varDeclMatch && !trimmed.includes('return') && !trimmed.includes('printf') && !trimmed.includes('scanf') && !trimmed.includes('for') && !trimmed.includes('while')) {
+        const type = varDeclMatch[1];
+        const name = varDeclMatch[2];
+        let expr = varDeclMatch[3] ? varDeclMatch[3].trim() : '0';
+
+        let evaluatedVal = expr;
+        const mathMatch = expr.match(/^([a-zA-Z0-9_]+)\s*([\+\-\*\/])\s*([a-zA-Z0-9_]+)$/);
+        if (mathMatch) {
+          const lVar = currentVars.find(v => v.name === mathMatch[1]);
+          const rVar = currentVars.find(v => v.name === mathMatch[3]);
+          const lVal = lVar ? parseFloat(lVar.val) : parseFloat(mathMatch[1]);
+          const rVal = rVar ? parseFloat(rVar.val) : parseFloat(mathMatch[3]);
+          if (!isNaN(lVal) && !isNaN(rVal)) {
+            const op = mathMatch[2];
+            if (op === '+') evaluatedVal = (lVal + rVal).toString();
+            else if (op === '-') evaluatedVal = (lVal - rVal).toString();
+            else if (op === '*') evaluatedVal = (lVal * rVal).toString();
+            else if (op === '/') evaluatedVal = (lVal / rVal).toString();
+          }
+        } else {
+          const refVar = currentVars.find(v => v.name === expr);
+          if (refVar) evaluatedVal = refVar.val;
+        }
+
+        const hexAddr = '0x' + (baseStackAddr).toString(16);
+        baseStackAddr += 4;
+
+        const existingIdx = currentVars.findIndex(v => v.name === name);
+        if (existingIdx !== -1) {
+          currentVars[existingIdx] = { name, val: evaluatedVal, addr: hexAddr, type };
+        } else {
+          currentVars.push({ name, val: evaluatedVal, addr: hexAddr, type });
+        }
+
+        trace.push({
+          line: lNo,
+          type: 'mem-cells',
+          stackFrames: [`main() (main.c:${lNo})`],
+          vars: JSON.parse(JSON.stringify(currentVars)),
+          explanation: `Line ${lNo}: Allocated ${type} ${name} = ${evaluatedVal}`
+        });
+        return;
+      }
+
+      // 2. Detect Re-assignment (x = 25; or x = y + 5; or x++;)
+      const incMatch = trimmed.match(/^([a-zA-Z0-9_]+)(\+\+|--);/);
+      if (incMatch) {
+        const name = incMatch[1];
+        const op = incMatch[2];
+        const found = currentVars.find(v => v.name === name);
+        if (found) {
+          const num = parseFloat(found.val) || 0;
+          found.val = (op === '++' ? num + 1 : num - 1).toString();
+          trace.push({
+            line: lNo,
+            type: 'mem-cells',
+            stackFrames: [`main() (main.c:${lNo})`],
+            vars: JSON.parse(JSON.stringify(currentVars)),
+            explanation: `Line ${lNo}: Updated ${name} ${op} ➜ ${found.val}`
+          });
+        }
+        return;
+      }
+
+      const assignMatch = trimmed.match(/^([a-zA-Z0-9_]+)\s*=\s*(.+);/);
+      if (assignMatch && !trimmed.includes('int') && !trimmed.includes('float') && !trimmed.includes('double')) {
+        const name = assignMatch[1];
+        const expr = assignMatch[2].trim();
+        const found = currentVars.find(v => v.name === name);
+        if (found) {
+          const refVar = currentVars.find(v => v.name === expr);
+          found.val = refVar ? refVar.val : expr;
+          trace.push({
+            line: lNo,
+            type: 'mem-cells',
+            stackFrames: [`main() (main.c:${lNo})`],
+            vars: JSON.parse(JSON.stringify(currentVars)),
+            explanation: `Line ${lNo}: Assigned ${name} = ${found.val}`
+          });
+        }
+        return;
+      }
+
+      // 3. Executable Statements (printf, scanf, function calls)
+      if (trimmed.includes('printf') || trimmed.includes('cout') || trimmed.includes('scanf') || trimmed.includes('(')) {
+        trace.push({
+          line: lNo,
+          type: 'mem-cells',
+          stackFrames: [`main() (main.c:${lNo})`],
+          vars: JSON.parse(JSON.stringify(currentVars)),
+          explanation: `Line ${lNo}: Executing statement '${trimmed.substring(0, 40)}'`
+        });
+      }
+    });
+
+    if (trace.length === 1) {
+      lines.forEach((lText, idx) => {
+        const lNo = idx + 1;
+        const trimmed = lText.trim();
+        if (trimmed && !trimmed.startsWith('//') && trimmed !== '{' && trimmed !== '}') {
+          trace.push({
+            line: lNo,
+            type: 'mem-cells',
+            stackFrames: [`main() (main.c:${lNo})`],
+            vars: JSON.parse(JSON.stringify(currentVars)),
+            explanation: `Line ${lNo}: Executing step`
+          });
+        }
+      });
+    }
+
+    return trace;
+  }
+
   generateCHelloTrace() {
-    return [
-      { line: 4, type: 'mem-cells', stackFrames: ['main() (main.c:4)'], vars: [], output: '[DEBUG MODE ACTIVE] Currently paused at line 4 (printf)\nExecuting process binary...' },
-      { line: 6, type: 'mem-cells', stackFrames: ['main() (main.c:6)'], vars: [{ name: 'a', val: 10, addr: '0x7ffe40' }], output: 'Hello World from GCC Compiler!\n' },
-      { line: 7, type: 'mem-cells', stackFrames: ['main() (main.c:7)'], vars: [{ name: 'a', val: 10, addr: '0x7ffe40' }, { name: 'b', val: 20, addr: '0x7ffe44' }], output: '' },
-      { line: 8, type: 'mem-cells', stackFrames: ['main() (main.c:8)'], vars: [{ name: 'a', val: 10, addr: '0x7ffe40' }, { name: 'b', val: 20, addr: '0x7ffe44' }, { name: 'sum', val: 30, addr: '0x7ffe48' }], output: '' },
-      { line: 10, type: 'mem-cells', stackFrames: ['main() (main.c:10)'], vars: [{ name: 'a', val: 10, addr: '0x7ffe40' }, { name: 'b', val: 20, addr: '0x7ffe44' }, { name: 'sum', val: 30, addr: '0x7ffe48' }], output: 'Sum: 10 + 20 = 30\n' },
-      { line: 11, type: 'mem-cells', stackFrames: ['main() (main.c:11)'], vars: [{ name: 'a', val: 10, addr: '0x7ffe40' }, { name: 'b', val: 20, addr: '0x7ffe44' }, { name: 'sum', val: 30, addr: '0x7ffe48' }], output: '[Process completed with exit code 0]' }
-    ];
+    return this.generateDynamicCodeTrace();
   }
 
   // STEP-BY-STEP REAL EXECUTION TRAJECTORY DEBUGGER CONTROLLER
@@ -906,7 +1165,9 @@ export class SandboxEngine {
     const templateSelect = document.getElementById('sandbox-template-select');
     const templateVal = templateSelect ? templateSelect.value : 'c-hello';
 
-    if (templateVal === 'c-selection-sort') {
+    if (templateVal === 'c-bubble-sort' || (this.editor && this.editor.value.includes('bubbleSort'))) {
+      this.executionTrace = this.generateBubbleSortTrace(arr);
+    } else if (templateVal === 'c-selection-sort') {
       this.executionTrace = this.generateSelectionSortTrace(arr);
     } else if (templateVal === 'c-insertion-sort') {
       this.executionTrace = this.generateInsertionSortTrace([12, 11, 13, 5, 6]);
@@ -936,10 +1197,8 @@ export class SandboxEngine {
       this.executionTrace = this.generateHashMapTrace();
     } else if (templateVal === 'c-recursion') {
       this.executionTrace = this.generateRecursionTrace();
-    } else if (templateVal === 'c-hello' || templateVal === 'c-basics') {
-      this.executionTrace = this.generateCHelloTrace();
     } else {
-      this.executionTrace = this.generateBubbleSortTrace(arr);
+      this.executionTrace = this.generateDynamicCodeTrace();
     }
 
     this.traceStepIdx = 0;

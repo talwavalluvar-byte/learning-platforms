@@ -103,7 +103,7 @@ export class MemoryVisualizer {
     }
 
     if (window.onStepChanged) {
-      window.onStepChanged(step.codeLine);
+      window.onStepChanged(step.codeLine, step.inlineHints || {});
     }
 
     // Synchronize step next / step prev clicks to current video playback position!

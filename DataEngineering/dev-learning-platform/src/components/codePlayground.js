@@ -13,7 +13,7 @@ export class CodePlayground {
     this.langTag = document.getElementById(langTagId);
   }
 
-  loadCode(snippet, language = 'c', highlightedLine = null) {
+  loadCode(snippet, language = 'c', highlightedLine = null, inlineHints = {}) {
     if (this.langTag) {
       this.langTag.textContent = language.toUpperCase();
     }
@@ -29,17 +29,23 @@ export class CodePlayground {
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
       const isHighlighted = (lineNum === highlightedLine) ? 'code-line-highlight' : '';
+      const arrowMarker = (lineNum === highlightedLine) ? '<span style="color:#eab308; font-weight:800; margin-right:4px;">➔</span>' : ' ';
       
       const syntaxLine = highlightCCode(line);
-      formattedHtml += `<span class="${isHighlighted}"><span style="color:#64748b; font-size:0.75rem; user-select:none; margin-right:12px;">${lineNum.toString().padStart(2, ' ')}</span>${syntaxLine}</span>\n`;
+      const hintText = inlineHints[lineNum] ? `<span class="ide-inlay-hint" style="color:#94a3b8; font-style:italic; font-size:0.78rem; margin-left:16px; background:rgba(148,163,184,0.08); padding:1px 6px; border-radius:4px; font-family:var(--font-mono); border:1px solid rgba(148,163,184,0.15); display:inline-flex; align-items:center; gap:4px;">${this.escapeHtml(inlineHints[lineNum])}</span>` : '';
+
+      formattedHtml += `<div class="code-line-row ${isHighlighted}" style="display:flex; align-items:center; line-height:1.6; padding:1px 4px; border-radius:3px;">
+        <span style="color:#64748b; font-size:0.75rem; user-select:none; width:45px; display:inline-block; font-family:var(--font-mono); text-align:right; margin-right:12px;">${arrowMarker}${lineNum.toString().padStart(2, ' ')}</span>
+        <span style="flex:1;">${syntaxLine}${hintText}</span>
+      </div>`;
     });
 
     this.codeBlock.innerHTML = formattedHtml;
   }
 
-  highlightLine(lineNum, snippet) {
+  highlightLine(lineNum, snippet, inlineHints = {}) {
     if (snippet) {
-      this.loadCode(snippet, this.langTag ? this.langTag.textContent.toLowerCase() : 'c', lineNum);
+      this.loadCode(snippet, this.langTag ? this.langTag.textContent.toLowerCase() : 'c', lineNum, inlineHints);
     }
   }
 
@@ -58,3 +64,4 @@ export class CodePlayground {
       .replace(/'/g, '&#039;');
   }
 }
+

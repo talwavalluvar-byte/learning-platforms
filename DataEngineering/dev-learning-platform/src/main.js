@@ -261,6 +261,7 @@ class DevBaseApp {
     this.renderDashboard();
     
     this.loadLesson(this.state.currentCourse, this.state.currentLesson);
+    this.switchView('sandbox');
   }
 
   initHeroDebuggerAnimation() {
@@ -482,7 +483,7 @@ class DevBaseApp {
     // Courses Catalog is public; all remaining views (Lesson Visualizer, Code Sandbox, Dashboard, Admin) require login!
     const originalSwitchView = this.switchView.bind(this);
     this.switchView = (viewId) => {
-      if (viewId !== 'catalog') {
+      if (viewId !== 'catalog' && viewId !== 'sandbox') {
         if (!this.authSession.isLoggedIn || !this.authSession.user) {
           const authModal = document.getElementById('auth-modal');
           if (authModal) authModal.style.display = 'flex';
@@ -561,8 +562,8 @@ class DevBaseApp {
       this.visualizer.toggleAutoPlay(e.currentTarget);
     });
 
-    window.onStepChanged = (lineNum) => {
-      this.codePlayground.highlightLine(lineNum, this.state.currentLesson.codeSnippet);
+    window.onStepChanged = (lineNum, inlineHints) => {
+      this.codePlayground.highlightLine(lineNum, this.state.currentLesson.codeSnippet, inlineHints);
     };
 
     document.getElementById('btn-prev-lesson')?.addEventListener('click', () => {
