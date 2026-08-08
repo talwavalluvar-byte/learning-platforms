@@ -261,7 +261,7 @@ class DevBaseApp {
     this.renderDashboard();
     
     this.loadLesson(this.state.currentCourse, this.state.currentLesson);
-    this.switchView('sandbox');
+    this.switchView('catalog');
   }
 
   initHeroDebuggerAnimation() {
@@ -352,19 +352,14 @@ class DevBaseApp {
   }
 
   setupAuthSystem() {
-    const defaultStudentSession = JSON.stringify({
-      isLoggedIn: true,
-      user: { name: 'Student Learner', role: 'student', email: 'student@log2code.com' }
-    });
-
-    this.authSession = JSON.parse(localStorage.getItem('log2code_session') || defaultStudentSession);
-    this.activeAuthRole = this.authSession?.user?.role || 'student';
+    this.authSession = JSON.parse(localStorage.getItem('log2code_session') || '{"isLoggedIn":false,"user":null}');
+    this.activeAuthRole = 'student';
 
     const updateAuthUI = () => {
       const authBox = document.getElementById('user-auth-box');
       if (!authBox) return;
 
-      if (this.authSession.isLoggedIn && this.authSession.user) {
+      if (this.authSession && this.authSession.isLoggedIn && this.authSession.user) {
         const u = this.authSession.user;
         const badgeBg = u.role === 'admin' ? 'rgba(88, 28, 135, 0.45)' : 'rgba(30, 58, 138, 0.45)';
         const badgeBorder = u.role === 'admin' ? '1px solid rgba(168,85,247,0.35)' : '1px solid rgba(56,189,248,0.35)';
@@ -411,13 +406,10 @@ class DevBaseApp {
 
       const logoutBtn = e.target.closest('#btn-user-logout');
       if (logoutBtn) {
-        this.authSession = {
-          isLoggedIn: true,
-          user: { name: 'Student Learner', role: 'student', email: 'student@log2code.com' }
-        };
-        localStorage.setItem('log2code_session', JSON.stringify(this.authSession));
+        this.authSession = { isLoggedIn: false, user: null };
+        localStorage.removeItem('log2code_session');
         updateAuthUI();
-        this.switchView('sandbox');
+        this.switchView('catalog');
         return;
       }
     });
