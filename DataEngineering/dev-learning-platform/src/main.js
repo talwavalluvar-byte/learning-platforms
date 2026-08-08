@@ -352,8 +352,13 @@ class DevBaseApp {
   }
 
   setupAuthSystem() {
-    this.authSession = JSON.parse(localStorage.getItem('log2code_session') || '{"isLoggedIn":false,"user":null}');
-    this.activeAuthRole = 'student';
+    const defaultStudentSession = JSON.stringify({
+      isLoggedIn: true,
+      user: { name: 'Student Learner', role: 'student', email: 'student@log2code.com' }
+    });
+
+    this.authSession = JSON.parse(localStorage.getItem('log2code_session') || defaultStudentSession);
+    this.activeAuthRole = this.authSession?.user?.role || 'student';
 
     const updateAuthUI = () => {
       const authBox = document.getElementById('user-auth-box');
@@ -406,10 +411,13 @@ class DevBaseApp {
 
       const logoutBtn = e.target.closest('#btn-user-logout');
       if (logoutBtn) {
-        this.authSession = { isLoggedIn: false, user: null };
-        localStorage.removeItem('log2code_session');
+        this.authSession = {
+          isLoggedIn: true,
+          user: { name: 'Student Learner', role: 'student', email: 'student@log2code.com' }
+        };
+        localStorage.setItem('log2code_session', JSON.stringify(this.authSession));
         updateAuthUI();
-        this.switchView('catalog');
+        this.switchView('sandbox');
         return;
       }
     });
