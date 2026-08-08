@@ -684,7 +684,7 @@ body.light-theme .ide-badge {
 
 .sandbox-split {
   display: grid !important;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr) !important;
+  grid-template-columns: 70% calc(30% - 12px) !important;
   gap: 12px !important;
   width: 100% !important;
   align-items: start !important;
@@ -3122,7 +3122,7 @@ body.light-theme .step-num-badge {
 
 .sandbox-split {
   display: grid !important;
-  grid-template-columns: 52% calc(48% - 16px) !important;
+  grid-template-columns: 70% calc(30% - 16px) !important;
   gap: 16px !important;
   min-height: 580px !important;
 }
